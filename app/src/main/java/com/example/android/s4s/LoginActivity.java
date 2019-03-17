@@ -1,6 +1,6 @@
 package com.example.android.s4s;
-
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -67,6 +67,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private FirebaseDatabase database;
     private DatabaseReference Ref_name, Ref_email, Ref_phone, Ref_password;
 
+    ProgressDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) throws NullPointerException {
         super.onCreate(savedInstanceState);
@@ -77,25 +79,23 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         sp1 = getSharedPreferences("uid",
                 MODE_PRIVATE);
+        mEmailField = findViewById(R.id.email_login_text_view);
+        mPasswordField = findViewById(R.id.password_login_text_view);
+        email_layout = findViewById(R.id.layout_login_email);
+        password_layout = findViewById(R.id.layout_login_password);
+        login = findViewById(R.id.login_button);
+        forgot_password = findViewById(R.id.forgot_password);
+
+        dialog = new ProgressDialog(this);
 
         // [START initialize_auth]
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
-        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        try {
-            database = FirebaseDatabase.getInstance();
-            //Ref_name = database.getReference("User").child("name");
-            //Ref_email = database.getReference("User").child("email");
-            Ref_name = database.getReference("User").child(currentFirebaseUser.getUid()).child("name");
-            Ref_email = database.getReference("User").child(currentFirebaseUser.getUid()).child("email");
-
-            sp1.edit().putString("getuid",currentFirebaseUser.getUid()).apply();
-        }
-        catch (NullPointerException ignored)
-        {
-
+        if (user == null) {
+            Toast.makeText(getApplicationContext(), "No User Exists", Toast.LENGTH_SHORT).show();
         }
 
 
@@ -180,6 +180,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         sp.edit().putBoolean("logged", true).apply();
                         sp1.edit().putString("uid", mAuth.getUid()).apply();
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        assert user != null;
                         if (user != null) {
                             String name = user.getDisplayName();
                             String email = user.getEmail();
@@ -207,12 +208,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         /**
          * Declaration and linking of views
          */
-        mEmailField = findViewById(R.id.email_login_text_view);
-        mPasswordField = findViewById(R.id.password_login_text_view);
-        email_layout = findViewById(R.id.layout_login_email);
-        password_layout = findViewById(R.id.layout_login_password);
-        login = findViewById(R.id.login_button);
-        forgot_password = findViewById(R.id.forgot_password);
 
 
         forgot_password.setOnClickListener(new View.OnClickListener() {
@@ -263,12 +258,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
          * When login button is clicked ,
          * checkDataEntered() is evaluated
          */
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn2(mEmailField.getText().toString(), mPasswordField.getText().toString());
-            }
-        });
+//        login.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (!validateForm())
+//                {
+//                    return;
+//                }
+//                sign_in(mEmailField.getText().toString(), mPasswordField.getText().toString());
+//            }
+//        });
 
     }
 
@@ -319,6 +318,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
+                assert account != null;
                 String personName = account.getDisplayName();
                 String personEmail = account.getEmail();
                 Ref_name.setValue(personName);
@@ -335,7 +335,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     // [END onactivityresult]
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // An unresolved error has occured and Google APIs  (including Sign-In) will not
         // be available.
         Toast.makeText(LoginActivity.this, "Google Connection Lost",
@@ -422,43 +422,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 });
     }
 
-
-    private void signIn2(String email, String password) {
-        //Log.d(TAG, "signIn:" + email);
-        if (!validateForm()) {
-            return;
-        }
-        // [START sign_in_with_email]
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            //Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            if (user.isEmailVerified()) {
-                                Toast.makeText(LoginActivity.this, "Login Successful",
-                                        Toast.LENGTH_SHORT).show();
-                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(i);
-                                sp.edit().putBoolean("logged", true).apply();
-                            } else {
-                                Toast.makeText(LoginActivity.this, "Verify Email Sent.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            // Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Sign in Failed.\nEnter Valid Email and Password",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-        // [END sign_in_with_email]
-    }
-
-
     /**
      * To check the validity of all the views
      */
@@ -543,5 +506,50 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             }, 3 * 1000);
 
         }
+    }
+
+    public void sign_in(View v) {
+
+        String email = mEmailField.getText().toString();
+        String password = mPasswordField.getText().toString();
+        dialog.setMessage("Signing In...");
+        dialog.show();
+        if (!validateForm()) {
+            return;
+        }
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+
+                        if (task.isSuccessful()) {
+                            dialog.dismiss();
+
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user.isEmailVerified()) {
+                                Toast.makeText(LoginActivity.this, "Login Successful",
+                                        Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(i);
+                                sp.edit().putBoolean("logged", true).apply();
+
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Verify Email Sent.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            // Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            dialog.dismiss();
+                            Toast.makeText(LoginActivity.this, "Sign in Failed.\nEnter Valid Email and Password",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                });
+
+
     }
 }

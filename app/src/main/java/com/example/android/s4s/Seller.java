@@ -26,8 +26,13 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,6 +51,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class Seller extends AppCompatActivity {
+    private static final String TAG = "FragmentActivity";
 
     // ImageView uploadfront, uploadback;
     Button  button;
@@ -60,11 +66,13 @@ public class Seller extends AppCompatActivity {
     private FirebaseDatabase databasebook;
     private FirebaseAuth mAuth;
 
-
+    private static int index = 0;
     ImageView viewImage,viewImage2;
     Button b,b2;
     ////// java class for adding profile photo
     private Uri selectedImage,selectedImage1;
+
+    int PLACE_PICKER_REQUEST = 5;
 
     ///to store image
 
@@ -76,6 +84,7 @@ public class Seller extends AppCompatActivity {
 
     private DatabaseReference databaseReference;
 
+    FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     //
     DatabaseReference data;
 
@@ -85,7 +94,8 @@ public class Seller extends AppCompatActivity {
     public static final String FB_DATABASE_PATH = "image";
 
     int i1;
-
+    String key;
+    TextView tvplace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,22 +135,30 @@ public class Seller extends AppCompatActivity {
         pincode_layout = findViewById(R.id.layout_pincode);
         upload_layout = findViewById(R.id.layout_upload1);
         upload1_layout = findViewById(R.id.layout_upload2);
+        tvplace = (TextView) findViewById(R.id.tvplace);
 
+
+        int i = index;
+        index++;
         databasebook=FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        book_name = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child("Book Name");
-        book_author = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child("Author's Name");
-        book_edition = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child("Book Edition");
-        book_publisher = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child("Publisher");
-        book_price = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child("Price");
+
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("Seller");
+        key = databaseReference.push().getKey();
+
+        book_name = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Book Name");
+        book_author = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Author's Name");
+        book_edition = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Book Edition");
+        book_publisher = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Publisher");
+        book_price = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Price");
         //book_rating = databasebook.getReference("Seller").child("Book");
-        sel_society = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child("Society");
-        sel_district = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child("District");
-        sel_pincode = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child("Pincode");
-        sel_state = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child("State");
-        sel_phn = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child("Contact details");
-        flag = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child("Flag");
+        sel_society = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Society");
+        sel_district = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("District");
+        sel_pincode = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Pincode");
+        sel_state = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("State");
+        sel_phn = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Contact details");
+        flag = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Flag");
 
         //below content is for placing backbutton in th toolbar
         if(getSupportActionBar()!=null){
@@ -247,6 +265,7 @@ public class Seller extends AppCompatActivity {
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     finish();
+
                                     addbook();
                                     Toast.makeText(getApplicationContext(), "Book is added for sale!!",
                                             Toast.LENGTH_SHORT).show();
@@ -300,6 +319,8 @@ public class Seller extends AppCompatActivity {
 
     }
     private void addbook(){
+
+
         book_name.setValue(editText.getText().toString());
         book_author.setValue(editText2.getText().toString());
         book_edition.setValue(editText4.getText().toString());
@@ -311,7 +332,7 @@ public class Seller extends AppCompatActivity {
         sel_pincode.setValue(editText9.getText().toString());
         sel_state.setValue(editText10.getText().toString());
         sel_phn.setValue(editText11.getText().toString());
-        int value = 2;
+        String value = "0";
         flag.setValue(value);
 
 
@@ -357,7 +378,7 @@ public class Seller extends AppCompatActivity {
     private void selectImage() {
 
 
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        final CharSequence[] options = {"Choose from Gallery", "Cancel"};
 
 
         AlertDialog.Builder builder1 = new AlertDialog.Builder (Seller.this);
@@ -406,7 +427,7 @@ public class Seller extends AppCompatActivity {
     private void selectImage1() {
 
 
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        final CharSequence[] options = {"Choose from Gallery", "Cancel"};
 
 
         AlertDialog.Builder builder1 = new AlertDialog.Builder (Seller.this);
@@ -429,7 +450,7 @@ public class Seller extends AppCompatActivity {
 
                     intent.putExtra (MediaStore.EXTRA_OUTPUT, Uri.fromFile (f));
 
-                    startActivityForResult (intent, 1);
+                    startActivityForResult(intent, 3);
 
                 } else if (options[item].equals ("Choose from Gallery")) {
 
@@ -455,115 +476,178 @@ public class Seller extends AppCompatActivity {
     @Override
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v ("ssasad", "RESULTCODE:" + Integer.toString (requestCode));
+        Log.v("ssasad", "RESULTCODE:" + Integer.toString(requestCode));
 
-        super.onActivityResult (requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+
+                Place place = PlacePicker.getPlace(data, this);
+                String address = String.format("Place: %s", place.getAddress());
+                Toast.makeText(this, address, Toast.LENGTH_SHORT).show();
+                tvplace.setText(place.getAddress());
+            }
+        }
 
         if (resultCode == RESULT_OK) {
 
             if (requestCode == 1) {
 
-                File f = new File (Environment.getExternalStorageDirectory ().toString ());
-
-                if(i1==1) {
-                    for (File temp : f.listFiles()) {
+                File f = new File(Environment.getExternalStorageDirectory().toString());
+                for (File temp : f.listFiles()) {
 
 
-                        if (temp.getName().equals("temp.jpg")) {
+                    if (temp.getName().equals("temp.jpg")) {
 
-                            f = temp;
+                        f = temp;
 
-                            // adding new peice of code here
-                            selectedImage = Uri.fromFile(new File(f.toString()));
+                        // adding new peice of code here
+                        selectedImage = Uri.fromFile(new File(f.toString()));
 
-                            ///
+                        ///
 
-                            break;
+                        break;
 
-                        }
                     }
                 }
-                if(i1==2) {
-                    for (File temp1 : f.listFiles()) {
-                        if (temp1.getName().equals("temp1.jpg")) {
-
-                            f = temp1;
-
-                            // adding new peice of code here
-                            selectedImage1 = Uri.fromFile(new File(f.toString()));
-
-                            ///
-
-                            break;
-
-                        }
-                    }
-                }
-
 
 
                 try {
 
                     Bitmap bitmap;
 
-                    BitmapFactory.Options bitmapOptions = new BitmapFactory.Options ();
+                    BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
 
 
-                    bitmap = BitmapFactory.decodeFile (f.getAbsolutePath (), bitmapOptions);
+                    bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), bitmapOptions);
 
-                    if(i1==1)
-                        viewImage.setImageBitmap (bitmap);
-                    if(i1==2)
-                        viewImage2.setImageBitmap(bitmap);
+
+                    viewImage.setImageBitmap(bitmap);
+
 
                     String path = Environment
 
-                            .getExternalStorageDirectory ()
+                            .getExternalStorageDirectory()
 
                             + File.separator
 
                             + "Phoenix" + File.separator + "default";
 
-                    f.delete ();
+                    f.delete();
 
                     OutputStream outFile = null;
 
-                    File file = new File (path, String.valueOf (System.currentTimeMillis ()) + ".jpg");
+                    File file = new File(path, String.valueOf(key) + ".jpg");
 
                     try {
 
-                        outFile = new FileOutputStream (file);
+                        outFile = new FileOutputStream(file);
 
-                        bitmap.compress (Bitmap.CompressFormat.JPEG, 85, outFile);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outFile);
 
-                        outFile.flush ();
+                        outFile.flush();
 
-                        outFile.close ();
+                        outFile.close();
 
                     } catch (FileNotFoundException e) {
 
-                        e.printStackTrace ();
+                        e.printStackTrace();
 
                     } catch (IOException e) {
 
-                        e.printStackTrace ();
+                        e.printStackTrace();
 
                     } catch (Exception e) {
 
-                        e.printStackTrace ();
+                        e.printStackTrace();
 
                     }
 
                 } catch (Exception e) {
 
-                    e.printStackTrace ();
+                    e.printStackTrace();
 
                 }
+
+
+            } else if (requestCode == 3) {
+                File f1 = new File(Environment.getExternalStorageDirectory().toString());
+                for (File temp1 : f1.listFiles()) {
+                    if (temp1.getName().equals("temp1.jpg")) {
+
+                        f1 = temp1;
+
+                        // adding new peice of code here
+                        selectedImage1 = Uri.fromFile(new File(f1.toString()));
+
+                        ///
+
+                        break;
+
+                    }
+                }
+
+                try {
+
+                    Bitmap bitmap;
+
+                    BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+
+
+                    bitmap = BitmapFactory.decodeFile(f1.getAbsolutePath(), bitmapOptions);
+
+                    viewImage2.setImageBitmap(bitmap);
+
+                    String path = Environment
+
+                            .getExternalStorageDirectory()
+
+                            + File.separator
+
+                            + "Phoenix" + File.separator + "default";
+
+                    f1.delete();
+
+                    OutputStream outFile = null;
+
+                    File file = new File(path, String.valueOf(key) + ".jpg");
+
+                    try {
+
+                        outFile = new FileOutputStream(file);
+
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outFile);
+
+                        outFile.flush();
+
+                        outFile.close();
+
+                    } catch (FileNotFoundException e) {
+
+                        e.printStackTrace();
+
+                    } catch (IOException e) {
+
+                        e.printStackTrace();
+
+                    } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                    }
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+
+                }
+
 
             } else if (requestCode == 2) {
 
 ///// changed uri selectimage  to global variable
-                if(i1==1) {
+                if (i1 == 1) {
 
                     selectedImage = data.getData();
 
@@ -584,17 +668,17 @@ public class Seller extends AppCompatActivity {
                     Log.w("pery", picturePath + "");
                     viewImage.setImageBitmap(thumbnail);
                 }
-                if(i1==2) {
+                if (i1 == 2) {
 
                     selectedImage1 = data.getData();
 
-                    String[] filePath = {MediaStore.Images.Media.DATA};
+                    String[] filePath1 = {MediaStore.Images.Media.DATA};
 
-                    Cursor c = getContentResolver().query(selectedImage1, filePath, null, null, null);
+                    Cursor c = getContentResolver().query(selectedImage1, filePath1, null, null, null);
 
                     c.moveToFirst();
 
-                    int columnIndex = c.getColumnIndex(filePath[0]);
+                    int columnIndex = c.getColumnIndex(filePath1[0]);
 
                     String picturePath = c.getString(columnIndex);
 
@@ -609,9 +693,11 @@ public class Seller extends AppCompatActivity {
 
             }
 
-        }
 
+        }
     }
+
+
 
     /// adding code for negotiator profile photo upload
 
@@ -631,7 +717,7 @@ public class Seller extends AppCompatActivity {
 
         if(selectedImage != null)
         {
-            StorageReference mstorage = storageReference.child (System.currentTimeMillis ()+"."+getFileextension (selectedImage));
+            StorageReference mstorage = storageReference.child(currentFirebaseUser.getUid() + String.valueOf(key) + "." + getFileextension(selectedImage));
 
             mstorage.putFile (selectedImage).addOnSuccessListener (new OnSuccessListener <UploadTask.TaskSnapshot> () {
                 @Override
@@ -642,7 +728,7 @@ public class Seller extends AppCompatActivity {
                         public void run() {
                             Toast.makeText (Seller.this,"image uploaded",Toast.LENGTH_SHORT).show ();
                         }
-                    },5000);
+                    }, 3000);
 
 
 
@@ -676,7 +762,7 @@ public class Seller extends AppCompatActivity {
 
         if(selectedImage1 != null)
         {
-            StorageReference mstorage = storageReference.child (System.currentTimeMillis ()+"."+getFileextension (selectedImage));
+            StorageReference mstorage = storageReference.child(currentFirebaseUser.getUid() + String.valueOf(key) + "." + getFileextension(selectedImage1));
 
             mstorage.putFile (selectedImage1).addOnSuccessListener (new OnSuccessListener <UploadTask.TaskSnapshot> () {
                 @Override
@@ -685,7 +771,7 @@ public class Seller extends AppCompatActivity {
                     handler.postDelayed (new Runnable () {
                         @Override
                         public void run() {
-                            Toast.makeText (Seller.this,"image uploaded",Toast.LENGTH_SHORT).show ();
+                            Toast.makeText(Seller.this, "image2 uploaded", Toast.LENGTH_SHORT).show();
                         }
                     },5000);
 
@@ -710,8 +796,24 @@ public class Seller extends AppCompatActivity {
         }
         else
         {
-            upload_layout.setError("Photo of the book is req");
+            upload1_layout.setError("Photo of the book is req");
         }
+    }
+
+    public void chooseplace(View view) {
+        PlacePicker.IntentBuilder builder1 = new PlacePicker.IntentBuilder();
+        try {
+            // Intent  in = builder1.build((Activity) getApplicationContext());
+
+            startActivityForResult(builder1.build(Seller.this), PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException e) {
+            Log.e(TAG, "onClick: GooglePlayServicesRepairableException: " + e.getMessage());
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Log.e(TAG, "onClick: GooglePlayServicesNotAvailableException: " + e.getMessage());
+        }
+
+
     }
 
 }

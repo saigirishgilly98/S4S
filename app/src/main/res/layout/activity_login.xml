@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".RegistrationActivity">
+    tools:context=".LoginActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -154,7 +154,10 @@
                             android:layout_marginRight="16dp"
                             android:background="@drawable/roundedbutton"
                             android:text="@string/login"
-                            android:textColor="@drawable/button_text" />
+                            android:textColor="@drawable/button_text"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:onClick="sign_in" />
 
                         <TextView
                             android:id="@+id/forgot_password"

@@ -1,4 +1,5 @@
 package com.example.android.s4s;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
@@ -36,6 +37,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
+/**
+ * Created by Daumantas on 2017-05-25.
+ */
+@RuntimePermissions
+
 /**
  * Created by User on 10/2/2017.
  */
@@ -48,6 +57,7 @@ public class maps extends AppCompatActivity implements OnMapReadyCallback {
         Log.d(TAG, "onMapReady: map is ready");
         mMap = googleMap;
 
+
         if (mLocationPermissionsGranted) {
             getDeviceLocation();
 
@@ -59,8 +69,11 @@ public class maps extends AppCompatActivity implements OnMapReadyCallback {
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
+
             init();
         }
+
+
     }
 
     private static final String TAG = "MapActivity";
@@ -187,8 +200,7 @@ public class maps extends AppCompatActivity implements OnMapReadyCallback {
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
                     .title(title)
-                    .draggable(true).visible(true)
-                    ;
+                    .draggable(true).visible(true);
             mMap.addMarker(options);
         }
 
@@ -225,6 +237,9 @@ public class maps extends AppCompatActivity implements OnMapReadyCallback {
         }
     }
 
+
+    @SuppressLint("NeedOnRequestPermissionsResult")
+    @NeedsPermission("1")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult: called.");

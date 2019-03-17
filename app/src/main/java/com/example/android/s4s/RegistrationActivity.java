@@ -1,10 +1,13 @@
 package com.example.android.s4s;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -36,35 +39,33 @@ public class RegistrationActivity extends AppCompatActivity {
     EditText confirmpassword;
     TextInputLayout name_layout, email_layout, phone_layout, password_layout, confirm_layout;
     Button register;
+    FirebaseAuth.AuthStateListener authStateListener;
 
     SharedPreferences sp, sp1;
 
     private FirebaseDatabase database;
     private FirebaseAuth mAuth;
-    private DatabaseReference Ref_name, Ref_email, Ref_phone, Ref_password;
-    private DatabaseReference Ref_nameA, Ref_emailA, Ref_phoneA, Ref_passwordA;
+
+    ProgressDialog progressDialog;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) throws NullPointerException {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+        progressDialog = new ProgressDialog(this);
 
-        //SharedPreferences for Logout
         sp = getSharedPreferences("login",
                 MODE_PRIVATE);
         sp1 = getSharedPreferences("uid",
                 MODE_PRIVATE);
 
-        if(sp.getBoolean("logged" ,false))
-        {
+        if (sp.getBoolean("logged", false)) {
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
         }
 
-        /**
-         * Declaration and linking of views
-         */
         name = findViewById(R.id.name_text_view);
         email = findViewById(R.id.email_text_view);
         phone = findViewById(R.id.phone_text_view);
@@ -78,21 +79,11 @@ public class RegistrationActivity extends AppCompatActivity {
         register = findViewById(R.id.register_button);
 
         database = FirebaseDatabase.getInstance();
+
+        DatabaseReference ref = database.getReference();
+        assert ref.getKey() != null;
+
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        try {
-            Ref_name = database.getReference("User").child(currentFirebaseUser.getUid()).child("name");
-            Ref_email = database.getReference("User").child(currentFirebaseUser.getUid()).child("email");
-            Ref_phone = database.getReference("User").child(currentFirebaseUser.getUid()).child("phone");
-            Ref_password = database.getReference("User").child(currentFirebaseUser.getUid()).child("password");
-            sp1.edit().putString("getuid",currentFirebaseUser.getUid()).apply();
-        }
-        catch(NullPointerException ignored)
-        {
-
-        }
-
 
 
         name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -111,7 +102,7 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    if (isEmail(email) == false) {
+                    if (!isEmail(email)) {
                         email_layout.setError("Enter valid email!");
                     } else
                         email_layout.setError(null);
@@ -123,7 +114,7 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    if (isValidMobile(phone) == false) {
+                    if (!isValidMobile(phone)) {
                         phone_layout.setError("Phone Number must have 10 digits!");
                     } else
                         phone_layout.setError(null);
@@ -135,7 +126,7 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    if (isValidPassword(password) == false) {
+                    if (!isValidPassword(password)) {
                         password_layout.setError("Password must be at least 8 characters!");
                     } else
                         password_layout.setError(null);
@@ -155,28 +146,6 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         });
 
-        /**
-         * When register button is clicked ,
-         * checkDataEntered() is evaluated
-         */
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createAccount(email.getText().toString(), password.getText().toString());
-                Ref_name.setValue(name.getText().toString());
-                Ref_email.setValue(email.getText().toString());
-                Ref_phone.setValue(phone.getText().toString());
-                Ref_password.setValue(password.getText().toString());
-
-            }
-        });
-
-
-
-        Intent intent = new Intent(RegistrationActivity.this, Profile1.class);
-        intent.putExtra("vasu", currentFirebaseUser.getUid());
-        startActivity(intent);
-
     }
 
 
@@ -187,58 +156,7 @@ public class RegistrationActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
     }
-    // [END on_start_check_user]
 
-
-    private void createAccount(String email, String password) {
-        // Log.d(TAG, "createAccount:" + email);
-        if (!validateForm()) {
-            return;
-        }
-
-
-        // [START create_user_with_email]
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            // Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(RegistrationActivity.this, "Registration Successful",
-                                    Toast.LENGTH_SHORT).show();
-                            // [START send_email_verification]
-                            user.sendEmailVerification()
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                //Log.d(TAG, "Email sent.");
-                                                Toast.makeText(RegistrationActivity.this, "Email Sent.",
-                                                        Toast.LENGTH_SHORT).show();
-
-                                            }
-                                        }
-                                    });
-                            // [END send_email_verification]
-                            Intent i = new Intent(RegistrationActivity.this, LoginActivity.class);
-                            startActivity(i);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            //Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(RegistrationActivity.this, "Registration failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                });
-        // [END create_user_with_email]
-    }
-
-    /**
-     * To check the validity of all the views
-     */
     private boolean validateForm() {
         boolean valid = true;
         /**
@@ -253,7 +171,7 @@ public class RegistrationActivity extends AppCompatActivity {
         /**
          * Error display for invalid email
          */
-        if (isEmail(email) == false) {
+        if (!isEmail(email)) {
             email_layout.setError("Enter valid email!");
             valid = false;
         } else
@@ -262,7 +180,7 @@ public class RegistrationActivity extends AppCompatActivity {
         /**
          * Error display for invalid phone
          */
-        if (isValidMobile(phone) == false) {
+        if (!isValidMobile(phone)) {
             phone_layout.setError("Phone Number must have 10 digits!");
             valid = false;
         } else
@@ -271,7 +189,7 @@ public class RegistrationActivity extends AppCompatActivity {
         /**
          * Error display for invalid password
          */
-        if (isValidPassword(password) == false) {
+        if (!isValidPassword(password)) {
             password_layout.setError("Password must be at least 8 characters!");
             valid = false;
         } else
@@ -377,6 +295,7 @@ public class RegistrationActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (exit) {
+            mAuth.signOut();
             Intent a = new Intent(Intent.ACTION_MAIN);
             a.addCategory(Intent.CATEGORY_HOME);
             a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -395,7 +314,69 @@ public class RegistrationActivity extends AppCompatActivity {
         }
 
     }
-    
+
+    public void sign_up(View v) {
+
+        final String em = email.getText().toString();
+        final String pw = password.getText().toString();
+        final String na = name.getText().toString();
+        final String ph = phone.getText().toString();
+
+        if (em.equals("") || pw.equals("")) {
+            Toast.makeText(getApplicationContext(), "Email or PAssword is blank!!", Toast.LENGTH_SHORT).show();
+
+        } else {
+            progressDialog.setMessage("Registering...Please Wait");
+            progressDialog.show();
 
 
+            mAuth.createUserWithEmailAndPassword(em, pw)
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                progressDialog.hide();
+
+                                database.getReference().child("User").child(mAuth.getUid()).child("email").setValue(em);
+                                database.getReference().child("User").child(mAuth.getUid()).child("password").setValue(pw);
+                                database.getReference().child("User").child(mAuth.getUid()).child("phone").setValue(ph);
+                                Toast.makeText(getApplicationContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
+
+
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                /* [START send_email_verification] */
+
+                                if (user != null) {
+                                    user.sendEmailVerification()
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        //Log.d(TAG, "Email sent.");
+                                                        Toast.makeText(RegistrationActivity.this, "Email Sent.",
+                                                                Toast.LENGTH_SHORT).show();
+
+                                                    }
+                                                }
+                                            });
+                                    // [END send_email_verification]
+                                    Intent i = new Intent(RegistrationActivity.this, LoginActivity.class);
+                                    startActivity(i);
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    //Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                    Toast.makeText(RegistrationActivity.this, "Registration failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        }
+                    });
+
+        }
+    }
 }
+
+
+
+
