@@ -1,4 +1,5 @@
 package com.example.android.s4s;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,9 +96,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         // [END initialize_auth]
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user == null) {
-            Toast.makeText(getApplicationContext(), "No User Exists", Toast.LENGTH_SHORT).show();
-        }
+//        if (user == null) {
+//            Toast.makeText(getApplicationContext(), "No User Exists", Toast.LENGTH_SHORT).show();
+//        }
 
 
         signInButton = findViewById(R.id.sign_in_button);
@@ -327,6 +329,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             } else {
                 // Google Sign In failed
                 //Log.e(TAG, "Google Sign In failed.");
+                String s = result.getStatus().getStatusMessage();
+                Log.d(TAG, "handleSignInResult:" + result.getStatus().toString());
                 Toast.makeText(LoginActivity.this, "Google SignIn Failed",
                         Toast.LENGTH_SHORT).show();
             }

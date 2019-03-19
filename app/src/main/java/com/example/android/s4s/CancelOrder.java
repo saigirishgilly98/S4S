@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class Old extends AppCompatActivity {
+public class CancelOrder extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class Old extends AppCompatActivity {
             {
                 Toast.makeText(getApplicationContext(), "Order has been cancelled",
                         Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(Old.this, MainActivity.class);
+                Intent i = new Intent(CancelOrder.this, MainActivity.class);
                 startActivity(i);
             }
         });

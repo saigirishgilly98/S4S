@@ -12,7 +12,7 @@ import android.widget.Button;
 
 public class my_orders extends AppCompatActivity {
 
-    Button buy,wish;
+    Button buy, wish;
 
 
     AlertDialog.Builder builder;
@@ -29,7 +29,7 @@ public class my_orders extends AppCompatActivity {
         wish = (Button) findViewById(R.id.button11);
         builder = new AlertDialog.Builder(this);
         //this code is for backbutton
-        if(getSupportActionBar()!=null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -50,21 +50,25 @@ public class my_orders extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        if(item.getItemId()==android.R.id.home)
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
             finish();
         return super.onOptionsItemSelected(item);
     }
 
-    public void openPayment(View view)
-    {
+    public void openPayment(View view) {
         Intent i = new Intent(this, payment.class);
         startActivity(i);
     }
 
-    public void openPayment1(View view)
-    {
+    public void openPayment1(View view) {
         Intent i = new Intent(this, Wishlist.class);
+        startActivity(i);
+
+    }
+
+    public void openMyOrders(View view) {
+        Intent i = new Intent(this, CancelOrder.class);
         startActivity(i);
     }
 }

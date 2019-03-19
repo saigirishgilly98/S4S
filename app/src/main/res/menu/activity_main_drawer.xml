@@ -29,9 +29,6 @@
             android:icon="@drawable/feedback"
             android:title="Feedback Form" />
 
-        <item
-            android:id="@+id/my_orders"
-            android:title = "My Orders"/>
 
         <item
             android:id="@+id/logout"

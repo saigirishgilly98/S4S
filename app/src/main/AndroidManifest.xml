@@ -22,6 +22,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
+
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/bookhub"
@@ -56,10 +59,6 @@
             android:label="@string/title_activity_profile1"
             android:theme="@style/HiddenTitleTheme.NoActionBar" />
         <activity
-            android:name=".Notification"
-            android:label="@string/title_activity_notification"
-            android:theme="@style/HiddenTitleTheme.NoActionBar" />
-        <activity
             android:name=".Logout1"
             android:label="@string/title_activity_logout1"
             android:theme="@style/HiddenTitleTheme.NoActionBar" />
@@ -76,10 +75,10 @@
             android:name=".Seller"
             android:label="@string/title_activity_seller1"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".Old"
-            android:label="@string/title_activity_old"
-            android:theme="@style/AppTheme" />
+        <!--<activity-->
+        <!--android:name=".Old"-->
+        <!--android:label="@string/title_activity_old"-->
+        <!--android:theme="@style/AppTheme" />-->
         <activity
             android:name=".Feedback"
             android:label="@string/title_activity_feedback"
@@ -137,6 +136,36 @@
         <activity android:name=".Pop" />
         <activity android:name=".MainActivitywish" />
         <activity android:name=".my_orders" />
+
+        <service android:name=".MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+            See README(https://goo.gl/l4GJaQ) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/bpicon" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+        <receiver android:name=".NotificationReceiver" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+
     </application>
 
 </manifest>

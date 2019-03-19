@@ -61,10 +61,10 @@ public class RegistrationActivity extends AppCompatActivity {
         sp1 = getSharedPreferences("uid",
                 MODE_PRIVATE);
 
-        if (sp.getBoolean("logged", false)) {
-            Intent i = new Intent(this, MainActivity.class);
-            startActivity(i);
-        }
+//        if (sp.getBoolean("logged", false)) {
+//            Intent i = new Intent(this, MainActivity.class);
+//            startActivity(i);
+//        }
 
         name = findViewById(R.id.name_text_view);
         email = findViewById(R.id.email_text_view);
@@ -340,6 +340,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                 database.getReference().child("User").child(mAuth.getUid()).child("email").setValue(em);
                                 database.getReference().child("User").child(mAuth.getUid()).child("password").setValue(pw);
                                 database.getReference().child("User").child(mAuth.getUid()).child("phone").setValue(ph);
+                                database.getReference().child("User").child(mAuth.getUid()).child("url").setValue("https://www.flaticon.com/free-icon/man_236831.jpg");
                                 Toast.makeText(getApplicationContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
 
 

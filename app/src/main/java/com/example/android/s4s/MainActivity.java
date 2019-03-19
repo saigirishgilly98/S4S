@@ -130,12 +130,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) { //different pages
         switch (item.getItemId()) {
             case R.id.old_transactions:
-                Intent intent3 = new Intent(this, Old.class);
-                startActivity(intent3);
+                Intent intent0 = new Intent(this, OldTransactions.class);
+                startActivity(intent0);
                 break;
-            case R.id.notification:
-                Intent intent7 = new Intent(this, Notification.class);
-                startActivity(intent7);
+
+            case R.id.my_orders:
+                Intent intent3 = new Intent(this, my_orders.class);
+                startActivity(intent3);
                 break;
             case R.id.tnc:
                 Intent intent1 = new Intent(this, TermsActivity.class);

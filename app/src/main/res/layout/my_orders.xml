@@ -15,7 +15,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:orientation="vertical"
         >
 
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:background="@drawable/back"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="5dp">
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -49,6 +49,7 @@
                     android:layout_marginLeft="50dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="50dp"
+                    android:layout_gravity="center_horizontal"
                     android:text="             BOOK 1"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                     android:textSize="18sp"
@@ -69,9 +70,9 @@
                     android:layout_width="match_parent"
 
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center">
 
-                    android:padding="5dp">
+                    <!--android:padding="5dp"-->
 
                     <Button
                         android:id="@+id/button1"
@@ -90,6 +91,9 @@
                         android:layout_gravity="right"
                         android:background="@color/colorPrimary"
                         android:text="Remove"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:onClick="openMyOrders"
                         android:textColor="#FFFFFF" />
 
                 </LinearLayout>
@@ -117,7 +121,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:background="@drawable/back"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="5dp">
 
             <ImageView
                 android:id="@+id/imageView2"
