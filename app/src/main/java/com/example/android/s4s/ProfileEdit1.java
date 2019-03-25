@@ -49,6 +49,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static android.Manifest.permission_group.CAMERA;
 
 
@@ -58,14 +60,11 @@ public class ProfileEdit1 extends AppCompatActivity {
     DatabaseReference databaseReference;
     EditText email_edit, phone_edit, name_edit;
     String phone, email, name;
-    private static final int GALLERY_INTENT = 2;
-    private static final int CAMERA_REQUEST_CODE = 1;
     ProgressDialog dialog;
     AlertDialog.Builder builder;
-    ImageView imageView1, imageView2;
+    CircleImageView imageView1, imageView2;
     FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     String downloadUrl, url;
-    // de.hdodenhof.circleimageview.CircleImageView pro;
 
     Bitmap myBitmap;
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -94,9 +93,6 @@ public class ProfileEdit1 extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //Picasso.with(ProfileEdit1.this).load("https://firebasestorage.googleapis.com/v0/b/s4sproject.appspot.com/o/9Il3qyWBCdUhc2Akv02OeDoQ1Oc2.jpg?alt=media&token=28701b98-2867-4a73-a9f6-182fdc924eb7.jpg").fit().centerCrop().into(imageView1);
-
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -108,12 +104,10 @@ public class ProfileEdit1 extends AppCompatActivity {
         dialog = new ProgressDialog(this);
         builder = new AlertDialog.Builder(this);
         mStorage = FirebaseStorage.getInstance().getReference();
-        imageView1 = (ImageView) findViewById(R.id.profile_pic);
-        imageView2 = (ImageView) findViewById(R.id.profile_editpic);
-        //selectedImage = Uri.parse("https://png.pngtree.com/element_our/png_detail/20181102/avatar-profile-logo-vector-emblem-illustration-modern-illustration-png_227485.jpg");
+        imageView1 = findViewById(R.id.profile_pic);
+        imageView2 = findViewById(R.id.profile_editpic);
 
         rootRef = FirebaseDatabase.getInstance().getReference();
-        //mStorage = FirebaseStorage.getInstance().getReference("Profile Pics");
         userRef = rootRef.child("User").child(FirebaseAuth.getInstance().getUid());
 
 
@@ -130,12 +124,6 @@ public class ProfileEdit1 extends AppCompatActivity {
                 if (imageurl != " ")
                     Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView2);
 
-
-                // Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView1);
-
-                // Picasso.with(Profile1.this).load(mAuth.getUid()).into(imageView1);
-
-
             }
 
             @Override
@@ -146,7 +134,6 @@ public class ProfileEdit1 extends AppCompatActivity {
         key = mAuth.getUid();
 
         databaseReference = FirebaseDatabase.getInstance().getReference("User").child(mAuth.getUid());
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
         storageReference = FirebaseStorage.getInstance().getReference();
 
 
@@ -165,9 +152,6 @@ public class ProfileEdit1 extends AppCompatActivity {
 
         permissions.add(CAMERA);
         permissionsToRequest = findUnAskedPermissions(permissions);
-        //get the permissions we have asked for before but are not granted..
-        //we will store this in a global list to access later.
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
@@ -253,13 +237,11 @@ public class ProfileEdit1 extends AppCompatActivity {
 
     public Intent getPickImageChooserIntent() {
 
-        // Determine Uri of camera image to save.
         Uri outputFileUri = getCaptureImageOutputUri();
 
         List<Intent> allIntents = new ArrayList<>();
         PackageManager packageManager = getPackageManager();
 
-        // collect all camera intents
         Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
         for (ResolveInfo res : listCam) {
@@ -272,7 +254,6 @@ public class ProfileEdit1 extends AppCompatActivity {
             allIntents.add(intent);
         }
 
-        // collect all gallery intents
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
         galleryIntent.setType("image/*");
         List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
@@ -283,7 +264,6 @@ public class ProfileEdit1 extends AppCompatActivity {
             allIntents.add(intent);
         }
 
-        // the main intent is the last in the list (fucking android) so pickup the useless one
         Intent mainIntent = allIntents.get(allIntents.size() - 1);
         for (Intent intent : allIntents) {
             if (intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
@@ -293,10 +273,8 @@ public class ProfileEdit1 extends AppCompatActivity {
         }
         allIntents.remove(mainIntent);
 
-        // Create a chooser from the main intent
         Intent chooserIntent = Intent.createChooser(mainIntent, "Select source");
 
-        // Add all other intents
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
 
         return chooserIntent;
@@ -347,8 +325,6 @@ public class ProfileEdit1 extends AppCompatActivity {
                     }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            //Uri durl=taskSnapshot.getMetadata().getDo; //contains file metadata such as size, content-type, etc.
-                            // ...
                             mountainref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
@@ -440,17 +416,12 @@ public class ProfileEdit1 extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        // save file url in bundle as it will be null on scren orientation
-        // changes
         outState.putParcelable("pic_uri", picUri);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
-        // get the file url
         picUri = savedInstanceState.getParcelable("pic_uri");
     }
 
@@ -514,8 +485,6 @@ public class ProfileEdit1 extends AppCompatActivity {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-                                                //Log.d("API123", "permisionrejected " + permissionsRejected.size());
 
                                                 requestPermissions(permissionsRejected.toArray(new String[permissionsRejected.size()]), ALL_PERMISSIONS_RESULT);
                                             }

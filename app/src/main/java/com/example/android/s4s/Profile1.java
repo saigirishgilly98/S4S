@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +22,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class Profile1 extends AppCompatActivity {
     FirebaseDatabase database;
@@ -33,7 +34,7 @@ public class Profile1 extends AppCompatActivity {
     String uid;
     SharedPreferences sp1;
     String url;
-    ImageView imageView1;
+    CircleImageView imageView1;
 
     TextView profileName, profileEmail, profilePhone;
 
@@ -51,9 +52,11 @@ public class Profile1 extends AppCompatActivity {
         //  Picasso.with(Profile1.this).load("https://image.flaticon.com/icons/svg/236/236831.svg").fit().centerCrop().into(imageView1);
 
 
+        //noinspection ConstantConditions
         FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getUid()).child("url").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //noinspection ConstantConditions
                 url = dataSnapshot.getValue().toString();
                 Picasso.with(getApplicationContext()).load(url).fit().centerCrop().into(imageView1);
             }
@@ -98,7 +101,6 @@ public class Profile1 extends AppCompatActivity {
                     Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView1);
 
 
-                // Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView1);
 
 
                 profileName = findViewById(R.id.profile_name);

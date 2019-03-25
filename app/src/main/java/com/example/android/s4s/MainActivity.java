@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
@@ -17,22 +18,76 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    SharedPreferences sp, sp1,sp2;
+    SharedPreferences sp, sp1, sp2;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    CircleImageView imageView;
+    TextView t1, t2;
+    DatabaseReference rootRef, userRef;
+    private Boolean exit = false;
+    private static final String TAG = MainActivity.class.getSimpleName();
+
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+
+    public final static String TAG_USERNAME = "username";
+    public final static String TAG_ID = "id";
+    int success;
+
+
+    String tag_json_obj = "json_obj_req";
+
+//    public void onResponse(String response) {
+//
+//        try {
+//            JSONObject jObj = new JSONObject(response);
+//
+//            success = jObj.getInt(TAG_SUCCESS);
+//
+//            // Check for error node in json
+//            if (success == 1) {
+//                String username = jObj.getString(TAG_USERNAME);
+//                String id = jObj.getString(TAG_ID);
+//                String User_type = jObj.getString("user_type"); //you need this parameter to dealt with your requirement
+//            }
+//
+//            if (user_type.equals("Admin"))
+//            // go to adminactivity
+//            else
+//            //go to useractivity
+//
+//        }
+//        catch (NullPointerException response)
+//        {
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -42,7 +97,7 @@ public class MainActivity extends AppCompatActivity
         //SharedPreferences for Logout
         sp = getSharedPreferences("login",
                 MODE_PRIVATE);
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         sp1 = getSharedPreferences("uid",
                 MODE_PRIVATE);
         sp1.edit().putString("uid", mAuth.getUid()).apply();
@@ -66,6 +121,72 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        imageView = findViewById(R.id.imageView);
+
+
+        FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getUid()).child("url").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //noinspection ConstantConditions
+                String url = dataSnapshot.getValue().toString();
+                Picasso.with(getApplicationContext()).load(url).fit().centerCrop().into(imageView);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        rootRef = FirebaseDatabase.getInstance().getReference();
+        //mStorage = FirebaseStorage.getInstance().getReference("Profile Pics");
+        userRef = rootRef.child("User").child(mAuth.getUid());
+
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                String name = dataSnapshot.child("name").getValue(String.class);
+                String email = dataSnapshot.child("email").getValue(String.class);
+                imageView = findViewById(R.id.imageView);
+
+
+                String imageurl = dataSnapshot.child("url").getValue().toString();
+                if (imageurl != " ")
+                    Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView);
+
+                t1 = findViewById(R.id.nav_head_name);
+                t2 = findViewById(R.id.textView);
+
+                t1.setText(name);
+                t2.setText(email);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
         final EditText search = (EditText) findViewById(R.id.search);
         search.setOnClickListener(new View.OnClickListener() {
@@ -82,8 +203,6 @@ public class MainActivity extends AppCompatActivity
 
 
     }
-
-    private Boolean exit = false;
 
     @Override
     public void onBackPressed() {
@@ -176,7 +295,6 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 break;
-
 
 
         }
