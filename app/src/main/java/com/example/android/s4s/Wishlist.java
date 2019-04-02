@@ -1,3 +1,4 @@
+//Sharmila Biswas
 package com.example.android.s4s;
 
 import android.content.DialogInterface;
@@ -26,7 +27,7 @@ public class Wishlist extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        buy = (Button) findViewById(R.id.buyall);
+        buy = findViewById(R.id.buyall);
         builder = new AlertDialog.Builder(this);
         //this code is for backbutton
         if(getSupportActionBar()!=null){
@@ -76,9 +77,10 @@ public class Wishlist extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void openPayment(View view)
-    {
+    public void openPayment(View view) {
         Intent i = new Intent(Wishlist.this, payment.class);
         startActivity(i);
     }
 }
+
+//Sharmila Biswas

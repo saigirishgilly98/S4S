@@ -1,3 +1,4 @@
+//Rahul Gite and Vasudev B M (Shared Requirement)
 package com.example.android.s4s;
 
 import android.Manifest;
@@ -32,6 +33,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,11 +56,20 @@ import permissions.dispatcher.RuntimePermissions;
 
 public class maps extends AppCompatActivity implements OnMapReadyCallback {
 
+    String key;
+    FirebaseAuth mAuth;
+    FirebaseDatabase database;
+    FirebaseDatabase databasebook;
+    DatabaseReference databaseReference;
+    FirebaseUser currentUser;
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: map is ready");
         mMap = googleMap;
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
 
 
         if (mLocationPermissionsGranted) {
@@ -96,8 +110,8 @@ public class maps extends AppCompatActivity implements OnMapReadyCallback {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        mSearchText = (EditText) findViewById(R.id.input_search);
-        mGps = (ImageView) findViewById(R.id.ic_gps);
+        mSearchText = findViewById(R.id.input_search);
+        mGps = findViewById(R.id.ic_gps);
 
         getLocationPermission();
 
@@ -152,6 +166,16 @@ public class maps extends AppCompatActivity implements OnMapReadyCallback {
 
             Log.d(TAG, "geoLocate: found a location: " + address.toString());
             //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
+
+            double latitude = address.getLatitude();
+            double longitude = address.getLongitude();
+
+            databasebook = FirebaseDatabase.getInstance();
+            mAuth = FirebaseAuth.getInstance();
+            databaseReference = FirebaseDatabase.getInstance().getReference("Seller");
+            databasebook.getReference("Seller").child(currentUser.getUid()).child("latitude").setValue(latitude);
+            databasebook.getReference("Seller").child(currentUser.getUid()).child("longitude").setValue(longitude);
+
 
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM,
                     address.getAddressLine(0));
@@ -269,3 +293,5 @@ public class maps extends AppCompatActivity implements OnMapReadyCallback {
     }
 
 }
+
+//Rahul Gite and Vasudev B M (Shared Requirement)

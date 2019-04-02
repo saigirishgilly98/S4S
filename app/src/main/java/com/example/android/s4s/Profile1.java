@@ -1,3 +1,5 @@
+//Vasudev B M
+
 package com.example.android.s4s;
 
 import android.content.Intent;
@@ -34,6 +36,8 @@ public class Profile1 extends AppCompatActivity {
     String uid;
     SharedPreferences sp1;
     String url;
+    TextView balance, ads;
+
     CircleImageView imageView1;
 
     TextView profileName, profileEmail, profilePhone;
@@ -48,6 +52,7 @@ public class Profile1 extends AppCompatActivity {
         DatabaseReference rootRef, userRef;
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         imageView1 = findViewById(R.id.profile_pic);
+
         //imageView1.setVisibility(View.VISIBLE);
         //  Picasso.with(Profile1.this).load("https://image.flaticon.com/icons/svg/236/236831.svg").fit().centerCrop().into(imageView1);
 
@@ -94,6 +99,8 @@ public class Profile1 extends AppCompatActivity {
                 String name = dataSnapshot.child("name").getValue(String.class);
                 String email = dataSnapshot.child("email").getValue(String.class);
                 String phone = dataSnapshot.child("phone").getValue(String.class);
+                String bal = dataSnapshot.child("balance").getValue(String.class);
+                // int  ad = (int)dataSnapshot.child("ads").getValue();
 
 
                 String imageurl = dataSnapshot.child("url").getValue().toString();
@@ -101,15 +108,18 @@ public class Profile1 extends AppCompatActivity {
                     Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView1);
 
 
-
-
                 profileName = findViewById(R.id.profile_name);
                 profileEmail = findViewById(R.id.profile_email);
                 profilePhone = findViewById(R.id.profile_phone);
+                balance = findViewById(R.id.profile_balance);
+                // ads = findViewById(R.id.profile_no_of_ads);
+
 
                 profileName.setText(name);
                 profileEmail.setText(email);
                 profilePhone.setText(phone);
+                balance.setText(bal);
+                // ads.setText(ad);
 
                 // Picasso.with(Profile1.this).load(mAuth.getUid()).into(imageView1);
 
@@ -148,6 +158,8 @@ public class Profile1 extends AppCompatActivity {
     }
 
 }
+
+//Vasudev B M
 
 
 

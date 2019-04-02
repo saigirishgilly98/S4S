@@ -1,3 +1,4 @@
+//Vikas B N
 package com.example.android.s4s;
 
 import android.content.Intent;
@@ -24,21 +25,17 @@ public class TermsActivity extends AppCompatActivity {
         }
 
 
-
     }
-    public void openLogin(View view)
-    {
-        CheckBox cb = (CheckBox)findViewById(R.id.checkBox);
-        if(cb.isChecked())
-        {
+
+    public void openLogin(View view) {
+        CheckBox cb = findViewById(R.id.checkBox);
+        if(cb.isChecked()) {
             Toast.makeText(getApplicationContext(), "Thanks for accepting the terms",
                     Toast.LENGTH_SHORT).show();
 
             Intent i = new Intent(TermsActivity.this, LoginActivity.class);
             startActivity(i);
-        }
-        else
-        {
+        } else {
             Toast.makeText(getApplicationContext(), "Please accept the terms to proceed",
                     Toast.LENGTH_SHORT).show();
         }
@@ -53,3 +50,5 @@ public class TermsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+
+//Vikas B N

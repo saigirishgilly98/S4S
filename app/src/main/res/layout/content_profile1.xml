@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--Vasudev B M-->
+
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -48,7 +51,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Vasudev"
+                        android:text="Name"
                         android:textColor="#ffff"
                         android:textStyle="bold"
                         android:textSize="21sp"
@@ -193,42 +196,10 @@
                     android:paddingLeft="25dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <ImageView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        app:srcCompat="@drawable/ic_group_add_black_24dp"/>
-                    <TextView
-                        android:id="@+id/profile_city"
 
-                        android:textStyle="bold"
 
-                        android:layout_gravity="center_vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="20dp"
-                        android:text="City "/>
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_marginTop="25dp"
-                    android:orientation="horizontal"
-                    android:paddingLeft="25dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <ImageView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        app:srcCompat="@drawable/ic_forum_black_24dp"/>
-                    <TextView
-                        android:id="@+id/profile_pincode"
 
-                        android:textStyle="bold"
-
-                        android:layout_gravity="center_vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="20dp"
-                        android:text= "Pincode"/>
-                </LinearLayout>
             </LinearLayout>
 
 
@@ -253,3 +224,5 @@
 
 
 </android.support.constraint.ConstraintLayout>
+
+    <!--Vasudev B M-->

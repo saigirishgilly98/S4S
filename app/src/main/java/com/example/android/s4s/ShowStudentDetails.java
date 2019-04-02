@@ -1,7 +1,9 @@
+//Sai Girish
 package com.example.android.s4s;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -35,7 +38,7 @@ public class ShowStudentDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_student_details);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
 
         recyclerView.setHasFixedSize(true);
 
@@ -47,21 +50,23 @@ public class ShowStudentDetails extends AppCompatActivity {
 
         progressDialog.show();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("Seller");
+
         final FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Seller").child(currentFirebaseUser.getUid());
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference messageRef = database.getReference("Seller");
+        Query queryRef = messageRef.child(currentFirebaseUser.getUid())
+                .orderByChild("Flag")
+                .equalTo("0");
+        queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-
-                DataSnapshot childSnapshot = snapshot.child(currentFirebaseUser.getUid());
-                Iterable<DataSnapshot> childChildren = childSnapshot.getChildren();
-
-                for (DataSnapshot dataSnapshot : childChildren) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
                     StudentDetails studentDetails = dataSnapshot.getValue(StudentDetails.class);
-
                     list.add(studentDetails);
+
                 }
 
                 adapter = new RecyclerViewAdapter(ShowStudentDetails.this, list);
@@ -72,12 +77,40 @@ public class ShowStudentDetails extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-                progressDialog.dismiss();
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
 
+
+        /** databaseReference.addValueEventListener(new ValueEventListener() {
+        @Override public void onDataChange(DataSnapshot snapshot) {
+
+        //DataSnapshot childSnapshot = snapshot.child(currentFirebaseUser.getUid());
+        //Iterable<DataSnapshot> childChildren = childSnapshot.getChildren();
+
+        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+
+        StudentDetails studentDetails = dataSnapshot.getValue(StudentDetails.class);
+        list.add(studentDetails);
+
+        }
+
+        adapter = new RecyclerViewAdapter(ShowStudentDetails.this, list);
+
+        recyclerView.setAdapter(adapter);
+
+        progressDialog.dismiss();
+        }
+
+        @Override public void onCancelled(DatabaseError databaseError) {
+
+        progressDialog.dismiss();
+
+        }
+        });**/
+
     }
 }
+
+//Sai Girish

@@ -1,11 +1,12 @@
+//Sharmila Biswas
 package com.example.android.s4s;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.app.AlertDialog;
 import android.widget.Toast;
 
 public class MainActivitywish extends AppCompatActivity {
@@ -18,7 +19,7 @@ public class MainActivitywish extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        buy = (Button) findViewById(R.id.buyall);
+        buy = findViewById(R.id.buyall);
         builder = new AlertDialog.Builder(this);
 
         buy.setOnClickListener(new View.OnClickListener() {
@@ -58,3 +59,5 @@ public class MainActivitywish extends AppCompatActivity {
         });
     }
 }
+
+//Sharmila Biswas

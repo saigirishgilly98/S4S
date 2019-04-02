@@ -2,26 +2,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.android.s4s">
-
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
@@ -30,11 +31,19 @@
         android:icon="@drawable/bookhub"
         android:label="@string/app_name"
         android:logo="@drawable/bookstore"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/bookhub"
         android:supportsRtl="true"
         android:theme="@style/HiddenTitleTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-
+        <activity
+            android:name=".ProfileEditAdmin"
+            android:label="@string/title_activity_profile_edit_admin"
+            android:theme="@style/HiddenTitleTheme.NoActionBar"></activity>
+        <activity
+            android:name=".ProfileAdmin"
+            android:label="@string/title_activity_profile_admin"
+            android:theme="@style/HiddenTitleTheme.NoActionBar" />
+        <activity android:name=".AdminActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -58,10 +67,6 @@
             android:name=".Profile1"
             android:label="@string/title_activity_profile1"
             android:theme="@style/HiddenTitleTheme.NoActionBar" />
-        <activity
-            android:name=".Logout1"
-            android:label="@string/title_activity_logout1"
-            android:theme="@style/HiddenTitleTheme.NoActionBar" />
         <activity android:name=".payment" />
         <activity
             android:name=".addtocart"
@@ -74,14 +79,17 @@
         <activity
             android:name=".Seller"
             android:label="@string/title_activity_seller1"
-            android:theme="@style/AppTheme" />
-        <!--<activity-->
-        <!--android:name=".Old"-->
-        <!--android:label="@string/title_activity_old"-->
-        <!--android:theme="@style/AppTheme" />-->
+            android:theme="@style/AppTheme" /> <!-- <activity -->
+        <!--android:name=".Old" -->
+        <!--android:label="@string/title_activity_old" -->
+        <!--android:theme="@style/AppTheme" /> -->
         <activity
             android:name=".Feedback"
             android:label="@string/title_activity_feedback"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".OldTransactions"
+            android:label="Old Transactions"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".TNC"
@@ -91,7 +99,6 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity android:name=".TermsActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>
@@ -100,6 +107,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"
+            tools:replace="android:value" />
+
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+
+
         <activity android:name=".RegistrationActivity" />
 
         <meta-data
@@ -108,51 +140,48 @@
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />
-        <!--
- <meta-data
-             android:name="com.facebook.sdk.ApplicationId"
-             android:value="@string/facebook_app_id" />
 
-         <activity
-             android:name="com.facebook.FacebookActivity"
-             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-             android:label="@string/app_name" />
-         <activity
-             android:name="com.facebook.CustomTabActivity"
-             android:exported="true">
-             <intent-filter>
-                 <action android:name="android.intent.action.VIEW" />
 
-                 <category android:name="android.intent.category.DEFAULT" />
-                 <category android:name="android.intent.category.BROWSABLE" />
-
-                 <data android:scheme="@string/fb_login_protocol_scheme" />
-             </intent-filter>
-         </activity>
-        -->
-        <activity
-            android:name=".SearchResults"
-            android:label="Search Results" />
+        <activity android:name=".SearchResults" />
         <activity android:name=".Pop" />
         <activity android:name=".MainActivitywish" />
         <activity android:name=".my_orders" />
+        <activity
+            android:name=".ShowStudentDetails"
+            android:label="Show Student"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".SalesList"
+            android:label="Sales"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".PurchasesList"
+            android:label="Purchase"
+            android:theme="@style/AppTheme" />
+
 
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
-            See README(https://goo.gl/l4GJaQ) for more. -->
+        <!--
+ Set custom default icon. This is used when no icon is set for incoming notification messages.
+            See README(https://goo.gl/l4GJaQ) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/bpicon" />
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <!--
+ Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
+
         <receiver android:name=".NotificationReceiver" />
 
         <provider
@@ -164,8 +193,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
-
     </application>
 
 </manifest>

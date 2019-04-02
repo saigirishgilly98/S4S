@@ -1,3 +1,4 @@
+//Sai Girish
 package com.example.android.s4s;
 
 public class StudentDetails {
@@ -13,7 +14,25 @@ public class StudentDetails {
     private String Pincode;
     private String Society;
     private String State;
+    private String Position;
+    private String Flag;
 
+
+    public String getPosition() {
+        return Position;
+    }
+
+    public void setPosition(String position) {
+        Position = position;
+    }
+
+    public String getFlag() {
+        return Flag;
+    }
+
+    public void setFlag(String flag) {
+        Flag = flag;
+    }
 
     public StudentDetails() {
         // This is default constructor.
@@ -99,4 +118,6 @@ public class StudentDetails {
         State = state;
     }
 
+
 }
+//Sai Girish

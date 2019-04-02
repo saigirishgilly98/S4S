@@ -1,3 +1,5 @@
+//Vikas B N
+
 package com.example.android.s4s;
 
 import android.content.Intent;
@@ -24,12 +26,10 @@ public class CancelOrder extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        Button b = (Button)findViewById(R.id.buttonold);
-        b.setOnClickListener(new View.OnClickListener()
-        {
+        Button b = findViewById(R.id.buttonold);
+        b.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Order has been cancelled",
                         Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(CancelOrder.this, MainActivity.class);
@@ -49,3 +49,5 @@ public class CancelOrder extends AppCompatActivity {
     }
 
 }
+
+//Vikas B N

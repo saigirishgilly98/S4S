@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--Sai Girish-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_root"
     android:layout_width="fill_parent"
@@ -27,3 +29,5 @@
     </EditText>
 
 </LinearLayout>
+
+    <!--Sai Girish-->

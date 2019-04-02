@@ -1,3 +1,4 @@
+//Rahul Gite
 package com.example.android.s4s;
 
 import android.content.Context;
@@ -15,11 +16,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Item> 
 
     Context context;
     private ArrayList<Book> items;
-    public RecyclerAdapter(Context context,ArrayList<Book> items)
-    {
+
+    public RecyclerAdapter(Context context,ArrayList<Book> items) {
         this.context = context;
         this.items = items;
     }
+
     @NonNull
     @Override
     public Item onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -33,15 +35,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Item> 
     public void onBindViewHolder(@NonNull Item viewHolder, int i) {
 
 
-
         final Book book = items.get(i);
 
         viewHolder.setBookName(book.getmBookname());
         viewHolder.setBookAuthor(book.getmAuthorname());
         viewHolder.setBookPrice(book.getmPrice());
-        viewHolder.setWishlist(book.getWish());
-        viewHolder.setBookImage(book.getMgetBookImageId());
-        viewHolder.setItemwish(book.getMaddtoCartId());
+        //viewHolder.setWishlist(book.getWish());
+        //viewHolder.setBookImage(book.getMgetBookImageId());
+        //viewHolder.setItemwish(book.getMaddtoCartId());
     }
 
     @Override
@@ -62,12 +63,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Item> 
         public Item(@NonNull View itemView) {
             super(itemView);
 
-            bookName = (TextView) itemView.findViewById(R.id.book_title);
-            bookAuthor = (TextView) itemView.findViewById(R.id.book_author);
-            bookPrice = (TextView) itemView.findViewById(R.id.book_price);
-            wishlist = (TextView) itemView.findViewById(R.id.text_wishlist);
-            bookImage = (ImageView) itemView.findViewById(R.id.item_image);
-            itemwish = (ImageView) itemView.findViewById(R.id.add_wishlist);
+            bookName = itemView.findViewById(R.id.book_title);
+            bookAuthor = itemView.findViewById(R.id.book_author);
+            bookPrice = itemView.findViewById(R.id.book_price);
+            wishlist = itemView.findViewById(R.id.text_wishlist);
+            bookImage = itemView.findViewById(R.id.item_image);
+            itemwish = itemView.findViewById(R.id.add_wishlist);
 
 
         }
@@ -100,3 +101,5 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Item> 
 
 
 }
+
+//Rahul Gite

@@ -1,3 +1,4 @@
+//Sai Girish(Major), Vasudev B M(Minor)
 package com.example.android.s4s;
 
 import android.app.ProgressDialog;
@@ -56,15 +57,6 @@ public class RegistrationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_registration);
         progressDialog = new ProgressDialog(this);
 
-        sp = getSharedPreferences("login",
-                MODE_PRIVATE);
-        sp1 = getSharedPreferences("uid",
-                MODE_PRIVATE);
-
-//        if (sp.getBoolean("logged", false)) {
-//            Intent i = new Intent(this, MainActivity.class);
-//            startActivity(i);
-//        }
 
         name = findViewById(R.id.name_text_view);
         email = findViewById(R.id.email_text_view);
@@ -77,6 +69,13 @@ public class RegistrationActivity extends AppCompatActivity {
         password_layout = findViewById(R.id.layout_password);
         confirm_layout = findViewById(R.id.layout_confirm);
         register = findViewById(R.id.register_button);
+
+        sp = getSharedPreferences("login", MODE_PRIVATE);
+        if (sp.getBoolean("logged", false)) {
+            Intent i = new Intent(RegistrationActivity.this, MainActivity.class);
+            startActivity(i);
+        }
+
 
         database = FirebaseDatabase.getInstance();
 
@@ -323,13 +322,13 @@ public class RegistrationActivity extends AppCompatActivity {
         final String ph = phone.getText().toString();
 
         if (em.equals("") || pw.equals("")) {
-            Toast.makeText(getApplicationContext(), "Email or PAssword is blank!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Email or Password is blank!!", Toast.LENGTH_SHORT).show();
 
         } else {
             progressDialog.setMessage("Registering...Please Wait");
             progressDialog.show();
 
-
+            final int val = 0;
             mAuth.createUserWithEmailAndPassword(em, pw)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -338,9 +337,22 @@ public class RegistrationActivity extends AppCompatActivity {
                                 progressDialog.hide();
 
                                 database.getReference().child("User").child(mAuth.getUid()).child("email").setValue(em);
+                                database.getReference().child("User").child(mAuth.getUid()).child("name").setValue(name);
                                 database.getReference().child("User").child(mAuth.getUid()).child("password").setValue(pw);
                                 database.getReference().child("User").child(mAuth.getUid()).child("phone").setValue(ph);
                                 database.getReference().child("User").child(mAuth.getUid()).child("url").setValue("https://www.flaticon.com/free-icon/man_236831.jpg");
+                                database.getReference().child("User").child(mAuth.getUid()).child("balance").setValue("1000");
+                                database.getReference().child("User").child(mAuth.getUid()).child("ads").setValue(val);
+                                database.getReference().child("User").child(mAuth.getUid()).child("type").setValue("1");
+
+                                String num = database.getReference().child("User").child("nlkd9s7YB1OfBBE257shUHjefut2").child("number").toString();
+                                int number = Integer.parseInt(num);
+                                number++;
+
+                                String num1 = Integer.toString(number);
+                                database.getReference().child("User").child("nlkd9s7YB1OfBBE257shUHjefut2").child("number").setValue(num1);
+
+
                                 Toast.makeText(getApplicationContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
 
 
@@ -379,5 +391,6 @@ public class RegistrationActivity extends AppCompatActivity {
 }
 
 
+//Sai Girish(Major), Vasudev B M(Minor)
 
 

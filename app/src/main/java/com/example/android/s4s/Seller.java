@@ -1,9 +1,10 @@
 package com.example.android.s4s;
 
-//Veena Nagar
+//Veena Nagar, Vikas B N(Notification)
 
 
-
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +21,8 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -45,8 +48,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -60,9 +66,17 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.android.s4s.notificationfinal.CHANNELid1;
+
 
 public class Seller extends AppCompatActivity {
     private static final String TAG = "FragmentActivity";
+    int num;
+    int ad = 0;
+    NotificationManagerCompat manager;
+    TextView ads;
+
+
 
     // Global variable
     Button  button;
@@ -75,9 +89,10 @@ public class Seller extends AppCompatActivity {
     TextInputLayout name_layout, author_layout, phone1_layout, edition_layout, price_layout,
             publisher_layout, spinner_layout, rating_layout, locality_layout, district_layout,
             state_layout, pincode_layout, upload_layout, upload1_layout;
+    private FirebaseDatabase database;
     private DatabaseReference book_name, book_author, book_edition, book_publisher, book_price,
             book_rating, sel_society, sel_district, sel_pincode, sel_phn, sel_state, flag,
-            book_branch;
+            book_branch, book_key, user_key;
 
     private FirebaseDatabase databasebook;
     private FirebaseAuth mAuth;
@@ -123,23 +138,25 @@ public class Seller extends AppCompatActivity {
         setContentView(R.layout.activity_seller1);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        manager = NotificationManagerCompat.from(this);
+
         //int i1;
 
 //       for variable creation
         builder = new AlertDialog.Builder(this);
         builder3 = new AlertDialog.Builder(this);
-        button = (Button) findViewById(R.id.button);
-        rb = (RatingBar) findViewById(R.id.ratingBar2);
-        editText = (EditText) findViewById(R.id.editText);
-        editText2 = (EditText) findViewById(R.id.editText2);
-        editText3 = (EditText) findViewById(R.id.editText3);
-        editText4 = (EditText) findViewById(R.id.editText4);
-        editText5 = (EditText) findViewById(R.id.editText5);
-        editText7 = (EditText) findViewById(R.id.editText7);
-        editText8 = (EditText) findViewById(R.id.editText8);
-        editText9 = (EditText) findViewById(R.id.editText9);
-        editText10 = (EditText) findViewById(R.id.editText10);
-        editText11 = (EditText) findViewById(R.id.editText11);
+        button = findViewById(R.id.button);
+        rb = findViewById(R.id.ratingBar2);
+        editText = findViewById(R.id.editText);
+        editText2 = findViewById(R.id.editText2);
+        editText3 = findViewById(R.id.editText3);
+        editText4 = findViewById(R.id.editText4);
+        editText5 = findViewById(R.id.editText5);
+        editText7 = findViewById(R.id.editText7);
+        editText8 = findViewById(R.id.editText8);
+        editText9 = findViewById(R.id.editText9);
+        editText10 = findViewById(R.id.editText10);
+        editText11 = findViewById(R.id.editText11);
         spinner_layout = findViewById(R.id.layout_branch);
         name_layout= findViewById(R.id.layout_name);
         author_layout = findViewById(R.id.layout_author);
@@ -154,13 +171,16 @@ public class Seller extends AppCompatActivity {
         upload_layout = findViewById(R.id.layout_upload1);
         upload1_layout = findViewById(R.id.layout_upload2);
         rating_layout = findViewById(R.id.layout_rating);
+        ads = findViewById(R.id.profile_no_of_ads);
+        database = FirebaseDatabase.getInstance();
+
         //tvplace=(TextView)findViewById(R.id.tvplace);
 
 
 //        dropdown of branch
-        final Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        final Spinner spinner = findViewById(R.id.spinner);
         List<String> branch = new ArrayList<>();
-        branch.add(0, "BRANCH");
+        branch.add(0, "CHOOSE BRANCH");
         branch.add("COMPUTER SCIENCE");
         branch.add("MECHANICAL");
         branch.add("ELECTRICAL");
@@ -202,9 +222,9 @@ public class Seller extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("Seller");
         key = databaseReference.push().getKey();
         book_branch = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("BRANCH");
-        book_name = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Book Name");
-        book_author = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Author's Name");
-        book_edition = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Book Edition");
+        book_name = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("BookName");
+        book_author = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("AuthorsName");
+        book_edition = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("BookEdition");
         book_publisher = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Publisher");
         book_price = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Price");
         //book_rating = databasebook.getReference("Seller").child("Book");
@@ -212,9 +232,13 @@ public class Seller extends AppCompatActivity {
         sel_district = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("District");
         sel_pincode = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Pincode");
         sel_state = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("State");
-        sel_phn = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Contact details");
+        sel_phn = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("ContactDetails");
         flag = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Flag");
         book_rating = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Rating");
+        book_key = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Book_Id");
+        user_key = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("User_Id");
+
+
 
         //below content is for placing backbutton in the toolbar
         if(getSupportActionBar()!=null){
@@ -228,12 +252,10 @@ public class Seller extends AppCompatActivity {
         data = FirebaseDatabase.getInstance ().getReference ();
 
 
-
-
-        b = (Button) findViewById (R.id.btnSelectPhoto);
-        viewImage = (ImageView) findViewById (R.id.frontpic);
-        b2 = (Button) findViewById (R.id.btnSelectPhoto2);
-        viewImage2 = (ImageView) findViewById (R.id.backpic);
+        b = findViewById(R.id.btnSelectPhoto);
+        viewImage = findViewById(R.id.frontpic);
+        b2 = findViewById(R.id.btnSelectPhoto2);
+        viewImage2 = findViewById(R.id.backpic);
 
 
         //get and set image
@@ -272,50 +294,84 @@ public class Seller extends AppCompatActivity {
                     name_layout.setError("Name of the book is req");
 
                 }
-                else if (editText2.getText().toString().equals("")) {
+                if (editText.getText().toString().equals(" ") || editText.getText().toString().equals("  ") || editText.getText().toString().equals("    ")) {
+                    name_layout.setError("space is not accepted");
+
+                } else name_layout.setError(null);
+                if (editText2.getText().toString().equals("")) {
                     author_layout.setError("Author's Name is req");
 
                 }
-                else if (editText3.getText().toString().equals("")) {
+                if (editText2.getText().toString().equals(" ") || editText2.getText().toString().equals("  ") || editText2.getText().toString().equals("    ")) {
+                    author_layout.setError("space is not accepted");
+
+                } else author_layout.setError(null);
+                if (editText3.getText().toString().equals("")) {
                     price_layout.setError("Expected price is req");
 
                 }
-                else if (editText4.getText().toString().equals("")) {
+                if (editText3.getText().toString().equals(" ") || editText3.getText().toString().equals("  ") || editText3.getText().toString().equals("    ")) {
+                    price_layout.setError("space is not accepted");
+
+                } else price_layout.setError(null);
+                if (editText4.getText().toString().equals("")) {
                     edition_layout.setError("Edition is req");
 
                 }
-                else if (editText5.getText().toString().equals("")) {
+                if (editText4.getText().toString().equals(" ") || editText4.getText().toString().equals("  ") || editText4.getText().toString().equals("     ")) {
+                    edition_layout.setError("space is not accepted");
+
+                } else edition_layout.setError(null);
+                if (editText5.getText().toString().equals("")) {
                     publisher_layout.setError("Publisher's name is req");
 
                 }
-                else if (editText7.getText().toString().equals("")) {
+                if (editText5.getText().toString().equals(" ") || editText5.getText().toString().equals("  ") || editText5.getText().toString().equals("    ")) {
+                    publisher_layout.setError("space is not accepted");
+
+                } else publisher_layout.setError(null);
+                if (editText7.getText().toString().equals("")) {
                     locality_layout.setError("enter you apartment/society/village name is req");
                 }
-                else if (editText8.getText().toString().equals("")) {
+                if (editText7.getText().toString().equals(" ") || editText7.getText().toString().equals("  ") || editText7.getText().toString().equals("    ")) {
+                    locality_layout.setError("space is not accepted");
+
+                } else locality_layout.setError(null);
+                if (editText8.getText().toString().equals("")) {
                     district_layout.setError("District name is req");
 
                 }
-                else if (editText9.getText().toString().equals("")) {
+                if (editText8.getText().toString().equals(" ") || editText8.getText().toString().equals("  ") || editText8.getText().toString().equals("    ")) {
+                    district_layout.setError("space is not accepted");
+
+                } else district_layout.setError(null);
+                if (editText9.getText().toString().equals("")) {
                     pincode_layout.setError("Pincode is req");
                 }
                 else if (!isValidpincode(editText9)) {
                     pincode_layout.setError("Pincode is wrong");
 
-                }
+                } else pincode_layout.setError(null);
 
 
-                else if (editText10.getText().toString().equals("")) {
+                if (editText10.getText().toString().equals("")) {
                     state_layout.setError("State name is req");
 
                 }
-                else if (editText11.getText().toString().equals("")) {
+                if (editText10.getText().toString().equals(" ") || editText10.getText().toString().equals("  ") || editText10.getText().toString().equals("   ")) {
+                    state_layout.setError("space is not accepted");
+
+                } else state_layout.setError(null);
+                if (editText11.getText().toString().equals("")) {
                     phone1_layout.setError("phone no. req");
 
                 }
                 else if (!isValidMobile(editText11)) {
                     phone1_layout.setError("phone no is wrong");
 
-                } else if (!editText.getText().toString().equals("") && !editText2.getText().toString().equals("") &&
+                } else phone1_layout.setError(null);
+
+                if (!editText.getText().toString().equals("") && !editText2.getText().toString().equals("") &&
                         !editText3.getText().toString().equals("") && !editText4.getText().toString().equals("") &&
                         !editText5.getText().toString().equals("") && !editText7.getText().toString().equals("") &&
                         !editText8.getText().toString().equals("") && !editText9.getText().toString().equals("") &&
@@ -334,18 +390,50 @@ public class Seller extends AppCompatActivity {
 
 //                    popup
                     else {
-                        builder.setMessage("Do you want to sale the book ??")
+                        builder.setMessage("Do you want to sell the book ??")
                                 .setCancelable(false)
 
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        finish();
+
+                                        DatabaseReference rootRef, userRef;
+                                        rootRef = FirebaseDatabase.getInstance().getReference();
+                                        //mStorage = FirebaseStorage.getInstance().getReference("Profile Pics");
+                                        userRef = rootRef.child("User").child(mAuth.getUid());
+
+
+                                        userRef.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                                ad = Integer.valueOf(dataSnapshot.child("ads").getValue().toString());
+
+                                                ad++;
+
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+                                        openPayment(findViewById(R.id.button));
 
                                         addbook();
-                                        Toast.makeText(getApplicationContext(), "Book is added for sale!!",
-                                                Toast.LENGTH_SHORT).show();
-                                        openPayment(findViewById(R.id.button));
+                                        ads = findViewById(R.id.profile_no_of_ads);
+                                        database.getReference().child("User").child(mAuth.getUid()).child("ads").setValue(ad);
+
+                                        // ads.setText(Integer.toString(ad));
+
+                                        sendsellnote();
                                         finish();
+
+//
+
+
+
                                     }
                                 })
                                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -355,6 +443,7 @@ public class Seller extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(), "Book is not added for sale!",
                                                 Toast.LENGTH_SHORT).show();
                                         Intent i6 = new Intent(Seller.this, Seller.class);
+
 
                                     }
                                 });
@@ -372,6 +461,28 @@ public class Seller extends AppCompatActivity {
         });
 
     }
+
+
+    public void sendsellnote() {
+        Intent activityIntent = new Intent(getApplicationContext(), Seller.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, activityIntent, 0);
+        Bitmap largeicon = BitmapFactory.decodeResource(getResources(), R.drawable.bpicon);
+        @SuppressWarnings("deprecations")
+        Notification builder = new NotificationCompat.Builder(getApplicationContext(), CHANNELid1)
+                .setSmallIcon(R.drawable.bookstoreicon)
+                .setLargeIcon(largeicon)
+                .setContentTitle("Book added for sale")
+                .setContentText("Your item has been added fpr sale")
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .addLine("The book details have been uploaded successfully."))
+                .setContentIntent(contentIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .build();
+        manager.notify(null, 3, builder);
+    }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -419,11 +530,15 @@ public class Seller extends AppCompatActivity {
         book_branch.setValue(item);
         String value = "0";
         flag.setValue(value);
+        book_key.setValue(key);
+        user_key.setValue(currentFirebaseUser.getUid());
+
+
 
 
         //initialise image variable
-        final ImageView test = (ImageView) findViewById (R.id.frontpic); //image stored here
-        final ImageView test1 = (ImageView) findViewById (R.id.backpic);
+        final ImageView test = findViewById(R.id.frontpic); //image stored here
+        final ImageView test1 = findViewById(R.id.backpic);
         final Bitmap bmap = ((BitmapDrawable) test.getDrawable ()).getBitmap ();
         final Bitmap bmap1 = ((BitmapDrawable) test1.getDrawable ()).getBitmap ();
         Drawable myDrawable = getResources ().getDrawable (R.drawable.bookstoreicon);
@@ -728,4 +843,4 @@ public class Seller extends AppCompatActivity {
 }
 
 
-//Veena Nagar
+//Veena Nagar, Vikas B N(Notification)

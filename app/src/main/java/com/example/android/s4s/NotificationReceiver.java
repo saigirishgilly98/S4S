@@ -1,3 +1,4 @@
+//Vikas B N
 package com.example.android.s4s;
 
 import android.content.BroadcastReceiver;
@@ -12,3 +13,5 @@ public class NotificationReceiver extends BroadcastReceiver {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }
+
+//Vikas b N

@@ -1,7 +1,10 @@
+//Vasudev B M, Vikas B N(Notification)
 package com.example.android.s4s;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -10,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -18,6 +22,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,7 +33,6 @@ import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,6 +57,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.Manifest.permission_group.CAMERA;
+import static com.example.android.s4s.notificationfinal.CHANNELid1;
 
 
 public class ProfileEdit1 extends AppCompatActivity {
@@ -67,6 +73,8 @@ public class ProfileEdit1 extends AppCompatActivity {
     String downloadUrl, url;
 
     Bitmap myBitmap;
+    NotificationManagerCompat manager;
+
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     Uri picUri;
 
@@ -97,9 +105,12 @@ public class ProfileEdit1 extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        name_edit = (EditText) findViewById(R.id.editname);
-        phone_edit = (EditText) findViewById(R.id.editphone);
-        email_edit = (EditText) findViewById(R.id.editmail);
+        name_edit = findViewById(R.id.editname);
+        phone_edit = findViewById(R.id.editphone);
+        email_edit = findViewById(R.id.editmail);
+
+        manager = NotificationManagerCompat.from(this);
+
 
         dialog = new ProgressDialog(this);
         builder = new AlertDialog.Builder(this);
@@ -141,7 +152,7 @@ public class ProfileEdit1 extends AppCompatActivity {
 
         builder1.setTitle("Add Photo!");
 
-        ImageView pic = (ImageView) findViewById(R.id.edit_pic);
+        ImageView pic = findViewById(R.id.edit_pic);
 
         pic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +174,7 @@ public class ProfileEdit1 extends AppCompatActivity {
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        ImageButton ib = (ImageButton) findViewById(R.id.tick);
+        ImageButton ib = findViewById(R.id.tick);
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
             @NonNull
@@ -192,7 +203,7 @@ public class ProfileEdit1 extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
-                            Toast.makeText(getApplicationContext(), "Edit Successful", Toast.LENGTH_SHORT).show();
+                            Editprofilenote();
                             openProfile(imageView2);
                             Intent i = new Intent(ProfileEdit1.this, Profile1.class);
                             startActivity(i);
@@ -211,10 +222,28 @@ public class ProfileEdit1 extends AppCompatActivity {
 
     }
 
+    public void Editprofilenote() {
+        Intent activityIntent = new Intent(getApplicationContext(), Profile1.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, activityIntent, 0);
+        Bitmap largeicon = BitmapFactory.decodeResource(getResources(), R.drawable.bpicon);
+        @SuppressWarnings("deprecations")
+        Notification builder = new NotificationCompat.Builder(ProfileEdit1.this, CHANNELid1)
+                .setSmallIcon(R.drawable.bookstoreicon)
+                .setLargeIcon(largeicon)
+                .setContentTitle("Profile Edit")
+                .setContentText("Your profile was successfully edited.")
+                .setContentIntent(contentIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .build();
+        manager.notify(null, 1, builder);
+    }
+
     public void onBackPressed() {
         Intent i = new Intent(this, Profile1.class);
         startActivity(i);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -295,7 +324,7 @@ public class ProfileEdit1 extends AppCompatActivity {
         Bitmap bitmap;
         if (resultCode == Activity.RESULT_OK) {
 
-            ImageView imageView = (ImageView) findViewById(R.id.profile_editpic);
+            ImageView imageView = findViewById(R.id.profile_editpic);
 
             if (getPickImageResultUri(data) != null) {
                 picUri = getPickImageResultUri(data);
@@ -305,7 +334,7 @@ public class ProfileEdit1 extends AppCompatActivity {
                     myBitmap = rotateImageIfRequired(myBitmap, picUri);
                     myBitmap = getResizedBitmap(myBitmap, 500);
 
-                    ImageView croppedImageView = (ImageView) findViewById(R.id.profile_editpic);
+                    ImageView croppedImageView = findViewById(R.id.profile_editpic);
                     croppedImageView.setImageBitmap(myBitmap);
                     imageView.setImageBitmap(myBitmap);
                     FirebaseUser cuser = mAuth.getCurrentUser();
@@ -349,7 +378,7 @@ public class ProfileEdit1 extends AppCompatActivity {
                 bitmap = (Bitmap) data.getExtras().get("data");
 
                 myBitmap = bitmap;
-                ImageView croppedImageView = (ImageView) findViewById(R.id.profile_editpic);
+                ImageView croppedImageView = findViewById(R.id.profile_editpic);
                 if (croppedImageView != null) {
                     croppedImageView.setImageBitmap(myBitmap);
                 }
@@ -503,3 +532,4 @@ public class ProfileEdit1 extends AppCompatActivity {
 
 
 }
+//Vasudev B M, Vikas B N(Notification)

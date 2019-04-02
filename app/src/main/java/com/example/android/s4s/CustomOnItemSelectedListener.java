@@ -1,3 +1,5 @@
+//Shishirdeep
+
 package com.example.android.s4s;
 
 import android.view.View;
@@ -7,7 +9,7 @@ import android.widget.Toast;
 
 public class CustomOnItemSelectedListener implements OnItemSelectedListener {
 
-    public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) {
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         Toast.makeText(parent.getContext(),
                 "OnItemSelectedListener : " + parent.getItemAtPosition(pos).toString(),
                 Toast.LENGTH_SHORT).show();
@@ -19,3 +21,5 @@ public class CustomOnItemSelectedListener implements OnItemSelectedListener {
     }
 
 }
+
+//Shishirdeep

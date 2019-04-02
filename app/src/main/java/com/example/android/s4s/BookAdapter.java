@@ -1,6 +1,11 @@
+//Rahul Gite
+
 package com.example.android.s4s;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +13,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -20,7 +30,8 @@ public class BookAdapter extends ArrayAdapter<Book> {
     FirebaseUser currentFirebaseUser;
     StorageReference storageReference;
     private LayoutInflater mInflator;
-    int k;
+    // int k;
+    String book_id;
 
     public BookAdapter(Context context, ArrayList<Book> pBooks) {
         super(context,0,pBooks);
@@ -29,7 +40,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
     }
 
     @Override
-    public View getView(int position,  View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
 
         View listItemView = convertView;
 
@@ -39,19 +50,19 @@ public class BookAdapter extends ArrayAdapter<Book> {
         }
         Book local_book = getItem(position);
 
-        TextView bookName = (TextView) listItemView.findViewById(R.id.book_title);
+        TextView bookName = listItemView.findViewById(R.id.book_title);
         bookName.setText(local_book.getmBookname());
 
-        TextView bookAuthor = (TextView) listItemView.findViewById(R.id.book_author);
+        TextView bookAuthor = listItemView.findViewById(R.id.book_author);
         bookAuthor.setText(local_book.getmAuthorname());
 
-        TextView bookPrice = (TextView) listItemView.findViewById(R.id.book_price);
+        TextView bookPrice = listItemView.findViewById(R.id.book_price);
         bookPrice.setText(local_book.getmPrice());
 
-        TextView wishlist = (TextView) listItemView.findViewById(R.id.text_wishlist);
-        wishlist.setText(local_book.getWish());
+        TextView wishlist = listItemView.findViewById(R.id.text_wishlist);
+        wishlist.setText("Add");
 
-        final ImageView bookImage = (ImageView) listItemView.findViewById(R.id.item_image);
+        final ImageView bookImage = listItemView.findViewById(R.id.item_image);
 
         //not sure if "k" is position here(Comment)
 
@@ -64,40 +75,53 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
         //(Code)
 
-//        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-//        storageReference = FirebaseStorage.getInstance ().getReference ("Front page images");
-//        StorageReference mstorage =  storageReference.child (currentFirebaseUser.getUid()+String.valueOf(k)+"."+"jpg");
-//
-//
-//        try {
-//
-//            mstorage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                @Override
-//                public void onSuccess(Uri uri) {
-//                    String imageURL = uri.toString();
-//                    Glide.with(mContext.getApplicationContext()).load(imageURL).into(bookImage);
-//                }
-//            }).addOnFailureListener(new OnFailureListener() {
-//                @Override
-//                public void onFailure(@NonNull Exception exception) {
-//                    // Handle any errors
-////                    Toast.makeText(BookAdapter.this, exception.getMessage(), Toast.LENGTH_LONG).show();
-//                }
-//            });
-//        } catch (NullPointerException e) {
-////            Toast.makeText(BookAdapter.this, e.getMessage(), Toast.LENGTH_LONG).show();
-//        }
+        book_id = local_book.getBook_Id();
+
+        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        storageReference = FirebaseStorage.getInstance().getReference("Front page images");
+        StorageReference mstorage = storageReference.child(currentFirebaseUser.getUid() + book_id + "." + "jpg");
+
+
+        try {
+
+            mstorage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    String imageURL = uri.toString();
+                    Glide.with(mContext.getApplicationContext()).load(imageURL).into(bookImage);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    //Handle any errors
+                    // Toast.makeText(BookAdapter.this,exception.getMessage(),Toast.LENGTH_LONG).show();
+
+                }
+            });
+        } catch (NullPointerException e) {
+            // Toast.makeText(BookAdapter.this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
 
 
         ///
 
-        ImageView itemwish = (ImageView) listItemView.findViewById(R.id.add_wishlist);
-        itemwish.setImageResource(local_book.getMaddtoCartId());
+        ImageView itemwish = listItemView.findViewById(R.id.add_wishlist);
+        itemwish.setImageResource(R.drawable.ic_add_shopping_cart);
 
-        ImageView ratings1 = (ImageView) listItemView.findViewById(R.id.book_ratings1);
-        ratings1.setImageResource(local_book.getMgetRatingsId());
+        ImageView ratings1 = listItemView.findViewById(R.id.book_ratings1);
+        ratings1.setImageResource(R.drawable.book_ratings);
+
+        itemwish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getContext(), Wishlist.class);
+                getContext().startActivity(i);
+            }
+        });
 
 
         return listItemView;
     }
 }
+
+//Rahul Gite

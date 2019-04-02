@@ -1,61 +1,68 @@
+//Rahul Gite
+
 package com.example.android.s4s;
 
 public class Book {
 
-    private String mBookname;
+    private String BRANCH;
 
-    private String mAuthorname;
+    private String Book_Name;
 
-    private String mPrice;
+    private String Author_Name;
 
-    private String wish = "Add";
+    private String Price;
 
-    private int mgetBookImageId;
 
-    private int mgetRatingsId;
+    private String Book_Id;
 
-    private int maddtoCartId;
+    private String User_Id;
 
-    public Book(String Bookname,String Authorname,String Price,String wish,int BookImageId,int RatingsId,int addtoCartId)
-    {
-        mBookname = Bookname;
-        mAuthorname = Authorname;
-        mPrice = Price;
-        this.wish = wish;
-        mgetBookImageId = BookImageId;
-        mgetRatingsId = RatingsId;
-        maddtoCartId = addtoCartId;
+    public Book(String branch, String Bookname, String Authorname, String Price, String book_Id, String user_Id) {
+        BRANCH = branch;
+        Book_Name = Bookname;
+        Author_Name = Authorname;
+        this.Price = Price;
+        Book_Id = book_Id;
+        User_Id = user_Id;
     }
 
-    public int getMgetBookImageId() {
-        return mgetBookImageId;
-    }
-
-    public int getMgetRatingsId() {
-        return mgetRatingsId;
-    }
-
-    public int getMaddtoCartId() {
-        return maddtoCartId;
-    }
 
     public String getmBookname() {
-        return mBookname;
+        return Book_Name;
     }
 
     public String getmAuthorname() {
-        return mAuthorname;
+        return Author_Name;
     }
 
     public String getmPrice() {
-        return mPrice;
+        return Price;
     }
 
-    public String getWish() {
-        return wish;
+    public String getBook_Id() {
+        return Book_Id;
     }
 
+    public void setBook_Id(String book_Id) {
+        Book_Id = book_Id;
+    }
 
+    public String getUser_Id() {
+        return User_Id;
+    }
 
+    public void setUser_Id(String user_Id) {
+        User_Id = user_Id;
+    }
 
+    public String getBRANCH() {
+        return BRANCH;
+    }
+
+    public void setBRANCH(String BRANCH) {
+        this.BRANCH = BRANCH;
+    }
 }
+
+
+//Rahul Gite

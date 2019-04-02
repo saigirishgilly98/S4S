@@ -1,7 +1,12 @@
+//Vasudev B M(Major), Rahul Gite(Minor), Vikas B N(Notification)
+
 package com.example.android.s4s;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -14,10 +19,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +29,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,44 +50,9 @@ public class MainActivity extends AppCompatActivity
     TextView t1, t2;
     DatabaseReference rootRef, userRef;
     private Boolean exit = false;
-    private static final String TAG = MainActivity.class.getSimpleName();
-
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
-
-    public final static String TAG_USERNAME = "username";
-    public final static String TAG_ID = "id";
-    int success;
-
-
-    String tag_json_obj = "json_obj_req";
-
-//    public void onResponse(String response) {
-//
-//        try {
-//            JSONObject jObj = new JSONObject(response);
-//
-//            success = jObj.getInt(TAG_SUCCESS);
-//
-//            // Check for error node in json
-//            if (success == 1) {
-//                String username = jObj.getString(TAG_USERNAME);
-//                String id = jObj.getString(TAG_ID);
-//                String User_type = jObj.getString("user_type"); //you need this parameter to dealt with your requirement
-//            }
-//
-//            if (user_type.equals("Admin"))
-//            // go to adminactivity
-//            else
-//            //go to useractivity
-//
-//        }
-//        catch (NullPointerException response)
-//        {
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+    public static final String CHANNELid1 = "Channel 1";
+    public static final String CHANNELid2 = "Channel 2";
+    FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +60,9 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        createNotificationChannels();
+
 
         sp2 = getSharedPreferences("uid", MODE_PRIVATE);
         sp2.getString("getuid", null);
@@ -103,110 +76,133 @@ public class MainActivity extends AppCompatActivity
         sp1.edit().putString("uid", mAuth.getUid()).apply();
         String id = sp1.getString("getuid", null);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        ViewPager Pager = (ViewPager) findViewById(R.id.viewpager);
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        TabLayout tabLayout = findViewById(R.id.tabs);
+        ViewPager Pager = findViewById(R.id.viewpager);
 
         tabpagerAdapter Tabpageradapter = new tabpagerAdapter(getSupportFragmentManager(), MainActivity.this);
         Pager.setAdapter(Tabpageradapter);
         tabLayout.setupWithViewPager(Pager);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         imageView = findViewById(R.id.imageView);
 
-
-        FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getUid()).child("url").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //noinspection ConstantConditions
-                String url = dataSnapshot.getValue().toString();
-                Picasso.with(getApplicationContext()).load(url).fit().centerCrop().into(imageView);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-        rootRef = FirebaseDatabase.getInstance().getReference();
-        //mStorage = FirebaseStorage.getInstance().getReference("Profile Pics");
-        userRef = rootRef.child("User").child(mAuth.getUid());
-
-
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                String name = dataSnapshot.child("name").getValue(String.class);
-                String email = dataSnapshot.child("email").getValue(String.class);
-                imageView = findViewById(R.id.imageView);
-
-
-                String imageurl = dataSnapshot.child("url").getValue().toString();
-                if (imageurl != " ")
-                    Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView);
-
-                t1 = findViewById(R.id.nav_head_name);
-                t2 = findViewById(R.id.textView);
-
-                t1.setText(name);
-                t2.setText(email);
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-        final EditText search = (EditText) findViewById(R.id.search);
-        search.setOnClickListener(new View.OnClickListener() {
+        final ImageView searchbutton = findViewById(R.id.hts);
+        searchbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String Search = search.getText().toString();
-                if (!TextUtils.isEmpty(Search)) {
-                    Intent intent = new Intent(MainActivity.this, SearchResults.class);
-                    startActivity(intent);
-                }
-
+                Intent i = new Intent(MainActivity.this, SearchResults.class);
+                startActivity(i);
             }
         });
 
+        if (currentUser == null)
+            Toast.makeText(this, "Null User Facebook", Toast.LENGTH_SHORT).show();
+        else {
+            FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getUid()).child("url").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    //noinspection ConstantConditions
+                    String url = dataSnapshot.getValue().toString();
+                    Picasso.with(getApplicationContext()).load(url).fit().centerCrop().into(imageView);
+                }
 
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+            rootRef = FirebaseDatabase.getInstance().getReference();
+            //mStorage = FirebaseStorage.getInstance().getReference("Profile Pics");
+            userRef = rootRef.child("User").child(mAuth.getUid());
+
+
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    String name = dataSnapshot.child("name").getValue(String.class);
+                    String email = dataSnapshot.child("email").getValue(String.class);
+                    imageView = findViewById(R.id.imageView);
+
+
+                    String imageurl = dataSnapshot.child("url").getValue().toString();
+                    if (imageurl != " ")
+                        Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView);
+
+                    t1 = findViewById(R.id.nav_head_name);
+                    t2 = findViewById(R.id.textView);
+
+                    t1.setText(name);
+                    t2.setText(email);
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+        }
     }
+
+
+    private void createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel1 = new NotificationChannel(
+                    CHANNELid1,
+                    "First Channel",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel1.setDescription("The first notification channel");
+            NotificationChannel channel2 = new NotificationChannel(
+                    CHANNELid2,
+                    "Second Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            channel2.setDescription("The second notification channel");
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel1);
+
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         assert drawer != null;
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -254,7 +250,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.my_orders:
-                Intent intent3 = new Intent(this, my_orders.class);
+                Intent intent3 = new Intent(this, ShowStudentDetails.class);
                 startActivity(intent3);
                 break;
             case R.id.tnc:
@@ -299,7 +295,7 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -329,6 +325,6 @@ public class MainActivity extends AppCompatActivity
 }
 
 
-
+//Vasudev B M(Major), Rahul Gite(Minor), Vikas B N(Notification)
 
 

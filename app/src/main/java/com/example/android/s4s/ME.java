@@ -1,14 +1,15 @@
+//Rahul Gite
 package com.example.android.s4s;
 
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,14 +25,16 @@ import java.util.ArrayList;
  */
 public class ME extends Fragment {
 
+    BookAdapter adapter;
+
 
     public ME() {
         // Required empty public constructor
     }
 
-    private RecyclerAdapter listAdapter;
+    // private RecyclerAdapter listAdapter;
     private ArrayList<Book> books = new ArrayList<>();
-    private RecyclerView recycler;
+    // private RecyclerView recycler;
 
 
     @Override
@@ -39,16 +42,8 @@ public class ME extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        // View v = inflater.inflate(R.layout.fragment_cs, container, false);
-
-        View v = inflater.inflate(R.layout.fragment_recycler, container, false);
-        recycler = v.findViewById(R.id.recycler_list);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recycler.setLayoutManager(layoutManager);
-
-
-
-
+        View v = inflater.inflate(R.layout.fragment_cs, container, false);
+        books.clear();
         perform(v);
 
 
@@ -61,12 +56,29 @@ public class ME extends Fragment {
         super.onStop();
     }
 
+    @Override
+    public void onDestroyView() {
+        adapter.clear();
+        super.onDestroyView();
+    }
+
     public void perform(View v) {
 
 
-        listAdapter = new RecyclerAdapter(getContext(), books);
+        adapter = new BookAdapter(getActivity(), books);
 
-        //recycler.setAdapter(listAdapter);
+        ListView listView = v.findViewById(R.id.list);
+
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent intent = new Intent(getContext(), addtocart.class);
+                startActivity(intent);
+            }
+        });
 
 
         DatabaseReference rootref, userref;
@@ -77,13 +89,19 @@ public class ME extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     for (DataSnapshot ds1 : ds.getChildren()) {
+
                         try {
-                            String author = ds1.child("AuthorsName").getValue().toString();
+                            String branch = ds1.child("BRANCH").getValue().toString();
+                            if (branch.compareToIgnoreCase("MECHANICAL") == 0) {
+                                String author = ds1.child("AuthorsName").getValue().toString();
+                                String title = ds1.child("BookName").getValue().toString();
+                                String price = ds1.child("Price").getValue().toString();
+                                String book_id = ds1.getKey();
+                                String seller_id = ds.getKey();
 
-                            String title = ds1.child("BookName").getValue().toString();
-                            String price = ds1.child("Price").getValue().toString();
-
-                            books.add(new Book(title, author, price, "Add", R.drawable.ic_menu_gallery, R.drawable.book_ratings, R.drawable.ic_add_shopping_cart));
+                                books.add(new Book(branch, title, author, price, book_id, seller_id));
+                                adapter.notifyDataSetChanged();
+                            }
 
                         } catch (NullPointerException abcd) {
 
@@ -98,34 +116,11 @@ public class ME extends Fragment {
 
             }
         });
-
-        //listAdapter.notifyDataSetChanged();
-
-        /*
-
-        ArrayList<Book> books = new ArrayList<Book>();
-
-
-        BookAdapter adapter = new BookAdapter(getActivity(), books);
-
-         ListView listView = (ListView) v.findViewById(R.id.list);
-
-
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Intent intent = new Intent(getContext(),addtocart.class);
-                startActivity(intent);
-            }
-        });*/
-
-
     }
 
 
 }
+
+//Rahul Gite
 
 

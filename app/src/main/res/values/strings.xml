@@ -36,8 +36,8 @@
     <string name="login">Login</string>
     <string name="notmember">Don\'t have an account?</string>
     <string name="forgotpassword"><u>Forgot Password?</u></string>
-    <string name="facebook_app_id">561557834349920</string>
-    <string name="fb_login_protocol_scheme">fb561557834349920</string>
+    <string name="facebook_app_id">632630067181071</string>
+    <string name="fb_login_protocol_scheme">fb632630067181071</string>
     <string name="signup"><b>Sign Up</b></string>
     <string name="bookpalace"><b>Book Palace</b></string>
     <string name="createaccount"><b>Create account.</b> New to Book Palace?</string>
@@ -76,10 +76,10 @@
     <string name="title_activity_profile_edit1">ProfileEdit1</string>
     <string name="title_activity_comp_sci">CompSci</string>
     <string name="title_activity_maps">Map</string>
-    <string name="google_maps_key">AIzaSyChyJMCyA2r1vzgcAJ47xzENofbdBzN84E</string>
+    <string name="google_maps_key">AIzaSyD_qSXm0_WWUCBa5d3YsRn2dYttx5ATaRw</string>
     <string name="pp">Place</string>
     <string name="dit">Title</string>
-    <string name="default_web_client_id2">558672191416–4o4rl426sjesiqnb8g419poj1dol3ivt.apps.googleusercontent.com</string>
+    <string name="default_web_client_id2">558672191416-vqqads54rst0gqjohoocisvmd1bqrhmt.apps.googleusercontent.com</string>
     <string name="dis">Info</string>
     <string name="title_activity_regist">Regist</string>
 
@@ -101,5 +101,13 @@
         completions."
     </string>
 
+    <string-array name="SearchFilters">
+        <item>Price</item>
+        <item>Distance</item>
+        <item>Ratings</item>
+
+    </string-array>
+    <string name="title_activity_profile_admin">ProfileAdmin</string>
+    <string name="title_activity_profile_edit_admin">ProfileEditAdmin</string>
 
 </resources>

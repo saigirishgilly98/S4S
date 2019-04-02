@@ -1,14 +1,16 @@
+//Rahul Gite
 package com.example.android.s4s;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,9 +26,11 @@ import java.util.ArrayList;
  */
 public class MN extends Fragment {
 
-    private RecyclerAdapter listAdapter;
+    BookAdapter adapter;
+
+    //private RecyclerAdapter listAdapter;
     private ArrayList<Book> books5 = new ArrayList<>();
-    private RecyclerView recycler5;
+    //private RecyclerView recycler5;
 
 
     public MN() {
@@ -38,11 +42,8 @@ public class MN extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_recycler, container, false);
-        recycler5 = v.findViewById(R.id.recycler_list);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recycler5.setLayoutManager(layoutManager);
-
+        View v = inflater.inflate(R.layout.fragment_cs, container, false);
+        books5.clear();
         perform(v);
 
         return v;
@@ -51,9 +52,21 @@ public class MN extends Fragment {
     public void perform(View v) {
 
 
-        listAdapter = new RecyclerAdapter(getContext(), books5);
+        adapter = new BookAdapter(getActivity(), books5);
 
-        recycler5.setAdapter(listAdapter);
+        ListView listView = v.findViewById(R.id.list);
+
+
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent intent = new Intent(getContext(), addtocart.class);
+                startActivity(intent);
+            }
+        });
 
 
         DatabaseReference rootref, userref;
@@ -64,13 +77,19 @@ public class MN extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     for (DataSnapshot ds1 : ds.getChildren()) {
+
                         try {
-                            String author = ds1.child("AuthorsName").getValue().toString();
+                            String branch = ds1.child("BRANCH").getValue().toString();
+                            if (branch.compareToIgnoreCase("MINING") == 0) {
+                                String author = ds1.child("AuthorsName").getValue().toString();
+                                String title = ds1.child("BookName").getValue().toString();
+                                String price = ds1.child("Price").getValue().toString();
+                                String book_id = ds1.getKey();
+                                String seller_id = ds.getKey();
 
-                            String title = ds1.child("BookName").getValue().toString();
-                            String price = ds1.child("Price").getValue().toString();
-
-                            books5.add(new Book(title, author, price, "Add", R.drawable.ic_menu_gallery, R.drawable.book_ratings, R.drawable.ic_add_shopping_cart));
+                                books5.add(new Book(branch, title, author, price, book_id, seller_id));
+                                adapter.notifyDataSetChanged();
+                            }
 
                         } catch (NullPointerException abcd) {
 
@@ -85,31 +104,6 @@ public class MN extends Fragment {
 
             }
         });
-
-        listAdapter.notifyDataSetChanged();
-
-        /*
-
-        ArrayList<Book> books = new ArrayList<Book>();
-
-
-        BookAdapter adapter = new BookAdapter(getActivity(), books);
-
-         ListView listView = (ListView) v.findViewById(R.id.list);
-
-
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Intent intent = new Intent(getContext(),addtocart.class);
-                startActivity(intent);
-            }
-        });*/
-
-
     }
 
     @Override
@@ -117,3 +111,5 @@ public class MN extends Fragment {
         super.onStop();
     }
 }
+
+//Rahul Gite

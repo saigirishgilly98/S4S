@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--Vasudev B M-->
+
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
@@ -16,10 +18,7 @@
             android:id="@+id/my_orders"
             android:icon="@android:drawable/checkbox_on_background"
             android:title="MyOrders" />
-        <item
-            android:id="@+id/notification"
-            android:icon="@drawable/notifications"
-            android:title="Notifications" />
+
         <item
             android:id="@+id/tnc"
             android:icon="@drawable/terms_conditions"
@@ -52,3 +51,5 @@
     </group>
 
 </menu>
+
+    <!--Vasudev B M-->

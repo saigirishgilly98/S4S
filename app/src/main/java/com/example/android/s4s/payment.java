@@ -1,28 +1,25 @@
+//Shishirdeep, Vikas B N(Notification)
 package com.example.android.s4s;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.Toast;
-import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.app.AlertDialog;
-import android.widget.Toast;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import static com.example.android.s4s.notificationfinal.CHANNELid1;
 
 
 public class payment extends AppCompatActivity {
@@ -30,6 +27,7 @@ public class payment extends AppCompatActivity {
     Button cancel;
     AlertDialog.Builder builder;
     private Spinner spinner1;
+    NotificationManagerCompat manager;
 
 
     @Override
@@ -40,15 +38,15 @@ public class payment extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        manager = NotificationManagerCompat.from(this);
         if(getSupportActionBar()!=null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
 
-        confirm = (Button) findViewById(R.id.button);
-        cancel = (Button) findViewById(R.id.button1);
+        confirm = findViewById(R.id.button);
+        cancel = findViewById(R.id.button1);
         builder = new AlertDialog.Builder(this);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,8 +61,7 @@ public class payment extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 finish();
-                                Toast.makeText(getApplicationContext(), "payment confirmed",
-                                        Toast.LENGTH_SHORT).show();
+                                paymentnote();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -117,8 +114,29 @@ public class payment extends AppCompatActivity {
             }
         });
     }
+
+    public void paymentnote() {
+        Intent activityIntent = new Intent(getApplicationContext(), Profile1.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, activityIntent, 0);
+        Bitmap largeicon = BitmapFactory.decodeResource(getResources(), R.drawable.bpicon);
+        @SuppressWarnings("deprecations")
+        Notification builder = new NotificationCompat.Builder(getApplicationContext(), CHANNELid1)
+                .setSmallIcon(R.drawable.bookstoreicon)
+                .setLargeIcon(largeicon)
+                .setContentTitle("Change in wallet balance")
+                .setContentText("Your wallet has been updated")
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .addLine("Your payment was successfully complete.")
+                        .addLine("Click to see updated wallet balance"))
+                .setContentIntent(contentIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .build();
+        manager.notify(null, 2, builder);
+    }
+
     public void addListenerOnSpinnerItemSelection() {
-        spinner1 = (Spinner) findViewById(R.id.spinner1);
+        spinner1 = findViewById(R.id.spinner1);
         spinner1.setOnItemSelectedListener(new CustomOnItemSelectedListener());
     }
 
@@ -132,4 +150,5 @@ public class payment extends AppCompatActivity {
     }
 
 }
+//Shishirdeep, Vikas B N(Notification)
 

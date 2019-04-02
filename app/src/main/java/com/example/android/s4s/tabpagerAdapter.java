@@ -1,3 +1,4 @@
+//Rahul Gite
 package com.example.android.s4s;
 
 import android.content.Context;
@@ -26,8 +27,7 @@ public class tabpagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int i) {
-        switch(i)
-        {
+        switch(i) {
             case 0:
                 CS cs1 = new CS();
                 return cs1;
@@ -68,3 +68,4 @@ public class tabpagerAdapter extends FragmentPagerAdapter {
         return tabnumber;
     }
 }
+//Rahul Gite

@@ -1,7 +1,14 @@
+//Sai Girish, Vikas B N(Notification)
 package com.example.android.s4s;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,10 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import static com.example.android.s4s.notificationfinal.CHANNELid1;
+
 
 public class my_orders extends AppCompatActivity {
 
     Button buy, wish;
+    NotificationManagerCompat manager;
 
 
     AlertDialog.Builder builder;
@@ -24,9 +34,10 @@ public class my_orders extends AppCompatActivity {
         setContentView(R.layout.activity_myorders);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        manager = NotificationManagerCompat.from(this);
 
-        buy = (Button) findViewById(R.id.button1);
-        wish = (Button) findViewById(R.id.button11);
+        buy = findViewById(R.id.button1);
+        wish = findViewById(R.id.button11);
         builder = new AlertDialog.Builder(this);
         //this code is for backbutton
         if (getSupportActionBar() != null) {
@@ -56,6 +67,27 @@ public class my_orders extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void sendmovenote() {
+        Intent activityIntent = new Intent(getApplicationContext(), Wishlist.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, activityIntent, 0);
+        Bitmap largeicon = BitmapFactory.decodeResource(getResources(), R.drawable.bpicon);
+        @SuppressWarnings("deprecations")
+        Notification builder = new NotificationCompat.Builder(getApplicationContext(), CHANNELid1)
+                .setSmallIcon(R.drawable.bookstoreicon)
+                .setLargeIcon(largeicon)
+                .setContentTitle("Order moved to WishList")
+                .setContentText("Your order has been removed")
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .addLine("The book has been moved to your WishList.")
+                        .addLine("Click to see your WishList"))
+                .setContentIntent(contentIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .build();
+        manager.notify(null, 3, builder);
+    }
+
+
     public void openPayment(View view) {
         Intent i = new Intent(this, payment.class);
         startActivity(i);
@@ -63,6 +95,7 @@ public class my_orders extends AppCompatActivity {
 
     public void openPayment1(View view) {
         Intent i = new Intent(this, Wishlist.class);
+        sendmovenote();
         startActivity(i);
 
     }
@@ -72,3 +105,4 @@ public class my_orders extends AppCompatActivity {
         startActivity(i);
     }
 }
+//Sai Girish, Vikas B N(Notification)
