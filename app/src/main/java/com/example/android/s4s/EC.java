@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -68,7 +69,9 @@ public class EC extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                String bookid = ((TextView) view.findViewById(R.id.book_id)).getText().toString();
                 Intent intent = new Intent(getContext(), addtocart.class);
+                intent.putExtra("bookid",bookid);
                 startActivity(intent);
             }
         });

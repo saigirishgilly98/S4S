@@ -1,29 +1,124 @@
-<?xml version="1.0" encoding="utf-8"?><!--Sharmila Biswas-->
+<?xml version="1.0" encoding="utf-8"?>
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!--Sharmila Biswas-->
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".addtocart">
+    tools:context=".addtocart"
+    android:padding="8dp">
 
-    <android.support.design.widget.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/HiddenTitleTheme.AppBarOverlay">
+        android:orientation="vertical"
+        android:background="@drawable/back">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+
+
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="227dp"
+            android:layout_height="228dp"
+            android:layout_marginTop="40dp"
+            android:layout_gravity="center"
+            android:background="#FFFFFF"
+            android:src="@drawable/book2"
+            android:paddingBottom="8dp"
+            />
+
+
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/HiddenTitleTheme.PopupOverlay" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/back">
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="165dp"
+                android:layout_marginTop="40dp"
+                android:text="Book Name: ________________\nDescription:________________\nAuthor:__________________\nEdition:_______________\nPrice:_____________________\n"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="18sp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"/>
+        </LinearLayout>
 
-    </android.support.design.widget.AppBarLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/back">
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="239dp"
+                android:layout_height="52dp"
+                android:layout_gravity="center"
+                android:background="#FFFFFF"
+                android:isIndicator="true"
+                android:layout_marginTop="40dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/back">
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginTop="40dp"
+                android:text= "Address:_________________\n        __________________________\n        _______________________\n        _____________________"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="18sp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"/>
+        </LinearLayout>
 
-    <include layout="@layout/content_addtocart" />
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="40dp"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/googlemaps"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="openMaps"
+
+            />
 
 
-</android.support.design.widget.CoordinatorLayout>
 
-    <!--Sharmila Biswas-->
+
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="187dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:background="@color/colorAccent"
+            android:text="ADD TO CART"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"/>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/colorPrimary"
+            android:text="BUY NOW"
+            android:textStyle="bold" />
+    </LinearLayout>
+</ScrollView><!--Sharmila Biswas-->

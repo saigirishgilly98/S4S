@@ -153,16 +153,18 @@ public class MainActivity extends AppCompatActivity
                     String email = dataSnapshot.child("email").getValue(String.class);
                     imageView = findViewById(R.id.imageView);
 
+                    try {
+                        String imageurl = dataSnapshot.child("url").getValue().toString();
+                        if (imageurl != " ")
+                            Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView);
 
-                    String imageurl = dataSnapshot.child("url").getValue().toString();
-                    if (imageurl != " ")
-                        Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView);
+                        t1 = findViewById(R.id.nav_head_name);
+                        t2 = findViewById(R.id.textView);
 
-                    t1 = findViewById(R.id.nav_head_name);
-                    t2 = findViewById(R.id.textView);
-
-                    t1.setText(name);
-                    t2.setText(email);
+                        t1.setText(name);
+                        t2.setText(email);
+                    }catch (Exception e){
+                    }
 
 
                 }

@@ -1,30 +1,500 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <!--Veena Nagar-->
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".Seller">
 
-    <android.support.design.widget.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="wrap_content"
+            android:background="@color/flipkart"
+            android:orientation="vertical">
 
-    </android.support.design.widget.AppBarLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/almendra_bold"
+                android:text="@string/bookpalace"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#ffffff" />
+        </LinearLayout>
 
-    <include layout="@layout/content_seller" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/dividerHorizontal" />
 
 
-</android.support.design.widget.CoordinatorLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/layout_bookdetails"
+                        style="@style/TextInputLayoutStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="8dp"
+                        app:passwordToggleEnabled="true"
+                        app:passwordToggleTint="@android:color/darker_gray">
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="Book Details"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="#000000" />
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_branch"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp">
+
+                            <Spinner
+                                android:id="@+id/spinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:drawablePadding="5dp"
+                                android:spinnerMode="dropdown"
+                                android:background="@drawable/back"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray" />
+                        </android.support.design.widget.TextInputLayout>
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_name"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp"
+                            android:hint="Book Name">
+
+                            <EditText
+                                android:id="@+id/editText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="5dp"
+                                android:inputType="textShortMessage|textLongMessage|textCapWords"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray" />
+
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_author"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp"
+                            android:hint="Author's Name">
+
+                            <EditText
+                                android:id="@+id/editText2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/back"
+                                android:drawablePadding="5dp"
+                                android:inputType="textPersonName"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_edition"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp"
+                            android:hint="Edition">
+
+                            <EditText
+                                android:id="@+id/editText4"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/back"
+                                android:drawablePadding="5dp"
+                                android:inputType="number"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray" />
+                        </android.support.design.widget.TextInputLayout>
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_publisher"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp"
+                            android:hint="Publisher">
+
+                            <EditText
+                                android:id="@+id/editText5"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/back"
+                                android:drawablePadding="5dp"
+                                android:inputType="textPersonName"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray" />
+                        </android.support.design.widget.TextInputLayout>
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_price"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp"
+                            android:hint="Expected Price">
+
+                            <EditText
+                                android:id="@+id/editText3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/back"
+                                android:drawablePadding="5dp"
+                                android:inputType="number"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray" />
+                        </android.support.design.widget.TextInputLayout>
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_rating"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginTop="8dp"
+                                android:text="Condition"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:textColor="@color/com_facebook_likeboxcountview_border_color" />
+
+                            <RatingBar
+                                android:id="@+id/ratingBar2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="45dp"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="8dp"
+                                android:layout_weight="1"
+                                android:isIndicator="false"
+                                android:progressTint="@color/com_facebook_button_background_color"
+                                android:visibility="visible" />
+                        </android.support.design.widget.TextInputLayout>
+
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_upload1"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_marginTop="8dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:orientation="vertical">
+
+
+                            <!--image display profile pic-->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="10dp" >
+
+                                <ImageView
+                                    android:id="@+id/frontpic"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                            </LinearLayout>
+
+                            <!--button linear layout-->
+                            <LinearLayout
+
+                                android:layout_width="match_parent"
+
+                                android:layout_height="wrap_content"
+
+                                android:gravity="center"
+
+                                android:padding="5dp"
+                                android:layout_marginTop="10dp">
+
+
+                                <Button
+                                    android:id="@+id/btnSelectPhoto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/upload"
+                                    android:background="@color/colorPrimary"
+                                    android:text="Upload front cover"
+                                    android:textColor="#FFFFFF" />
+
+                            </LinearLayout>
+
+                        </android.support.design.widget.TextInputLayout>
+
+
+                        <!--seller details-->
+                    </android.support.design.widget.TextInputLayout>
+
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/layout_seller"
+                        style="@style/TextInputLayoutStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="8dp">
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="Seller Details"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="#000000" />
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_phone_no"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp"
+                            android:hint="Phone">
+
+                            <EditText
+                                android:id="@+id/editText11"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/back"
+                                android:drawablePadding="5dp"
+                                android:inputType="phone"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_society"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp"
+                            android:hint="Locality">
+
+                            <EditText
+                                android:id="@+id/editText7"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/back"
+                                android:drawablePadding="5dp"
+                                android:inputType="textLongMessage"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <!--for taking input as Google map-->
+                        <!--<android.support.design.widget.TextInputLayout-->
+                        <!--style="@style/TextInputLayoutStyle"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="8dp"-->
+                        <!--android:layout_marginTop="8dp"-->
+                        <!--android:layout_marginRight="8dp">-->
+
+                        <!--<Button-->
+                        <!--android:id="@+id/button4"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="8dp"-->
+                        <!--android:layout_marginTop="8dp"-->
+                        <!--android:layout_marginRight="8dp"-->
+                        <!--android:layout_marginBottom="8dp"-->
+                        <!--android:textColor="#FFFFFF"-->
+                        <!--android:background="@color/colorPrimaryDark"-->
+                        <!--android:onClick="chooseplace"-->
+                        <!--android:text="chooseplace" />-->
+
+                        <!--<TextView-->
+                        <!--android:id="@+id/tvplace"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:background="@drawable/back"-->
+                        <!--android:drawablePadding="5dp"-->
+                        <!--android:inputType="textShortMessage|textLongMessage"-->
+                        <!--android:textColor="@android:color/black"-->
+                        <!--android:textColorHint="@android:color/darker_gray" />-->
+                        <!--</android.support.design.widget.TextInputLayout>-->
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_district"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp"
+                            android:hint="District">
+
+                            <EditText
+                                android:id="@+id/editText8"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/back"
+                                android:drawablePadding="5dp"
+                                android:inputType="textShortMessage|textLongMessage"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_pincode"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp"
+                            android:hint="Pincode">
+
+                            <EditText
+                                android:id="@+id/editText9"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/back"
+                                android:drawablePadding="5dp"
+                                android:inputType="number"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/layout_state"
+                            style="@style/TextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp"
+                            android:hint="State">
+
+                            <EditText
+                                android:id="@+id/editText10"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/back"
+                                android:drawablePadding="5dp"
+                                android:inputType="textShortMessage|textLongMessage"
+                                android:textColor="@android:color/black"
+                                android:textColorHint="@android:color/darker_gray" />
+                        </android.support.design.widget.TextInputLayout>
+                    </android.support.design.widget.TextInputLayout>
+
+
+                    <Button
+                        android:id="@+id/button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="8dp"
+                        android:textColor="#FFFFFF"
+                        android:background="@color/colorPrimaryDark"
+                        android:text="Submit" />
+
+                    <View
+                        android:layout_width="@+id/terms"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="16dp"
+                        android:background="?android:attr/dividerHorizontal" />
+
+                    <TextView
+                        android:id="@+id/terms_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="8dp"
+                        android:text="By clicking Submit, You agree to all our Terms and Conditions"
+                        android:textColor="@android:color/darker_gray" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
 
     <!--Veena Nagar-->

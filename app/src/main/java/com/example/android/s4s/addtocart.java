@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +18,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import static com.example.android.s4s.MainActivity.CHANNELid1;
+import static java.lang.Float.parseFloat;
 
 public class addtocart extends AppCompatActivity {
     Button add;
@@ -27,6 +40,10 @@ public class addtocart extends AppCompatActivity {
     Button buy;
     AlertDialog.Builder builder;
     NotificationManagerCompat managerCompat;
+    TextView desc;
+    TextView address;
+    RatingBar rating_bar;
+    ImageView img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +59,55 @@ public class addtocart extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        desc = findViewById(R.id.textView);
+        address = findViewById(R.id.textView2);
+        rating_bar = findViewById(R.id.ratingBar);
+        img = findViewById(R.id.imageView1);
+
+        Bundle bundle = getIntent().getExtras();
+        final String bookid = bundle.getString("bookid");
+
+
+        DatabaseReference rootref, userref;
+        rootref = FirebaseDatabase.getInstance().getReference();
+        userref = rootref.child("Seller");
+        userref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            try {
+                                String author = ds.child(bookid).child("AuthorsName").getValue().toString();
+                                String title = ds.child(bookid).child("BookName").getValue().toString();
+                                String price = ds.child(bookid).child("Price").getValue().toString();
+                                String book_id = ds.child(bookid).getKey();
+                                String edition = ds.child(bookid).child("BookEdition").getValue().toString();
+                                String society = ds.child(bookid).child("Society").getValue().toString();
+                                String district = ds.child(bookid).child("District").getValue().toString();
+                                String pincode = ds.child(bookid).child("Pincode").getValue().toString();
+                                String state = ds.child(bookid).child("State").getValue().toString();
+                                String rating = ds.child(bookid).child("Rating").getValue().toString();
+                                String seller_id = ds.getKey();
+                                desc.setText("Book Name:" + title + "\nAuthor:" + author + "\nEdition:" + edition + "\nPrice:" + price + "\n");
+                                address.setText("Address:" + society + "\n" + district + "\n" + pincode + "\n" + state);
+                                rating_bar.setRating(parseFloat(rating));
+                                //img.setImageURI(android.net.Uri.parse("gs://s4sproject.appspot.com/images"+book_id+".jpeg"));
+                                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images/"+ book_id);
+                                GlideApp.with(addtocart.this)
+                                        .load(storageReference)
+                                        .into(img);
+                            } catch (NullPointerException abcd) {
+
+                            }
+                        }
+
+                    }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
         add.setOnClickListener(new View.OnClickListener() {

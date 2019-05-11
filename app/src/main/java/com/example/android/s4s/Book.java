@@ -12,7 +12,6 @@ public class Book {
 
     private String Price;
 
-
     private String Book_Id;
 
     private String User_Id;

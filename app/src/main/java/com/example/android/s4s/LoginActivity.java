@@ -1,25 +1,19 @@
-
-//Sai Girish(Major), Vasudev B M(Minor), Vikas B N(Notification)
-
 package com.example.android.s4s;
 
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,12 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.Login;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -47,6 +41,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -56,31 +51,35 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static com.example.android.s4s.MainActivity.CHANNELid1;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
+
+    /**
+     * Declaration
+     */
     EditText mEmailField;
     EditText mPasswordField;
     TextView forgot_password;
     TextInputLayout email_layout, password_layout;
     Button login;
-    NotificationManagerCompat manager;
-
     LoginButton loginButton;
     private CallbackManager callbackManager;
     // [START declare_auth]
     private FirebaseAuth mAuth;
     // [END declare_auth]
-    SharedPreferences sp, sp2, sp1;
+    SharedPreferences sp, sp2;
     private GoogleSignInClient mGoogleSignInClient;
     private static final String TAG = "LogInActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -89,44 +88,20 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private FirebaseDatabase database;
     private DatabaseReference Ref_name, Ref_email, Ref_phone, Ref_password;
 
-    ProgressDialog dialog;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) throws NullPointerException {
-
-        callbackManager = CallbackManager.Factory.create();
-
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
         sp = getSharedPreferences("login",
                 MODE_PRIVATE);
-
-        manager = NotificationManagerCompat.from(this);
-
-
-        mEmailField = findViewById(R.id.email_login_text_view);
-        mPasswordField = findViewById(R.id.password_login_text_view);
-        email_layout = findViewById(R.id.layout_login_email);
-        password_layout = findViewById(R.id.layout_login_password);
-        login = findViewById(R.id.login_button);
-        forgot_password = findViewById(R.id.forgot_password);
-
-        dialog = new ProgressDialog(this);
-
 
         // [START initialize_auth]
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-//        if (user == null) {
-//            Toast.makeText(getApplicationContext(), "No User Exists", Toast.LENGTH_SHORT).show();
-//        }
+        database = FirebaseDatabase.getInstance();
 
 
         signInButton = findViewById(R.id.sign_in_button);
@@ -162,12 +137,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
          * on clicking facebook login button
          */
         loginButton = findViewById(R.id.login_button_fb);
-        loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
+        loginButton.setReadPermissions("email", "public_profile");
 
 
         /**
          * Sign-in is continued with facebook
          */
+        callbackManager = CallbackManager.Factory.create();
 
 
         // Callback registration
@@ -207,17 +183,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         Intent i = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(i);
                         sp.edit().putBoolean("logged", true).apply();
-                        sp1.edit().putString("uid", mAuth.getUid()).apply();
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        assert user != null;
                         if (user != null) {
                             String name = user.getDisplayName();
                             String email = user.getEmail();
-                            database.getReference().child("User").child(mAuth.getCurrentUser().getUid()).child("name").setValue(name);
-                            database.getReference().child("User").child(mAuth.getCurrentUser().getUid()).child("email").setValue(email);
-
-//                            Ref_name.setValue(name);
-//                            Ref_email.setValue(email);
+                            try {
+                                database.getReference("User").child(mAuth.getCurrentUser().getUid()).child("name").setValue(name);
+                                database.getReference("User").child(mAuth.getCurrentUser().getUid()).child("email").setValue(email);
+                            }catch (Exception e){}
                         }
                     }
 
@@ -240,6 +213,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         /**
          * Declaration and linking of views
          */
+        mEmailField = findViewById(R.id.email_login_text_view);
+        mPasswordField = findViewById(R.id.password_login_text_view);
+        email_layout = findViewById(R.id.layout_login_email);
+        password_layout = findViewById(R.id.layout_login_password);
+        login = findViewById(R.id.login_button);
+        forgot_password = findViewById(R.id.forgot_password);
 
 
         forgot_password.setOnClickListener(new View.OnClickListener() {
@@ -255,7 +234,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 // set prompts.xml to alertdialog builder
                 alertDialogBuilder.setView(promptsView);
 
-                final EditText userInput = promptsView
+                final EditText userInput = (EditText) promptsView
                         .findViewById(R.id.editTextDialogUserInput);
 
                 // set dialog message
@@ -290,16 +269,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
          * When login button is clicked ,
          * checkDataEntered() is evaluated
          */
-//        login.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (!validateForm())
-//                {
-//                    return;
-//                }
-//                sign_in(mEmailField.getText().toString(), mPasswordField.getText().toString());
-//            }
-//        });
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn2(mEmailField.getText().toString(), mPasswordField.getText().toString());
+            }
+        });
 
     }
 
@@ -315,33 +290,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             // Log.d(TAG, "Email sent.");
-                            sendpwdchange();
-
+                            Toast.makeText(LoginActivity.this, "Reset Password Sent.",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
         // [END send_password_reset]
     }
-
-
-    public void sendpwdchange() {
-        //Intent activityIntent =new Intent(getApplicationContext(),Wishlist.class);
-        //PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),0,activityIntent,0);
-        Bitmap largeicon = BitmapFactory.decodeResource(getResources(), R.drawable.bpicon);
-        @SuppressWarnings("deprecations")
-        Notification builder = new NotificationCompat.Builder(getApplicationContext(), CHANNELid1)
-                .setSmallIcon(R.drawable.bookstoreicon)
-                .setLargeIcon(largeicon)
-                .setContentTitle("Password reset")
-                .setContentText("Your 'reset password' link has been sent")
-                .setStyle(new NotificationCompat.InboxStyle()
-                        .addLine("A reset password link has been sent to your registered e-mail ID."))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .build();
-        manager.notify(null, 3, builder);
-    }
-
 
     // [START on_start_check_user]
     @Override
@@ -370,17 +325,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
-                assert account != null;
-//                String personName = account.getDisplayName();
-//                String personEmail = account.getEmail();
-//                Ref_name.setValue(personName);
-//                Ref_email.setValue(personEmail);
+                String personName = account.getDisplayName();
+                String personEmail = account.getEmail();
+                try {
+                    database.getReference("User").child(mAuth.getCurrentUser().getUid()).child("name").setValue(personName);
+                    database.getReference("User").child(mAuth.getCurrentUser().getUid()).child("email").setValue(personEmail);
+                }catch (Exception e){}
                 firebaseAuthWithGoogle(account);
             } else {
                 // Google Sign In failed
                 //Log.e(TAG, "Google Sign In failed.");
-                String s = result.getStatus().getStatusMessage();
-                Log.d(TAG, "handleSignInResult:" + result.getStatus().toString());
                 Toast.makeText(LoginActivity.this, "Google SignIn Failed",
                         Toast.LENGTH_SHORT).show();
             }
@@ -389,7 +343,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     // [END onactivityresult]
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolved error has occured and Google APIs  (including Sign-In) will not
         // be available.
         Toast.makeText(LoginActivity.this, "Google Connection Lost",
@@ -410,8 +364,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                             //Log.d(TAG, "signInWithCredential:success");
                             Toast.makeText(LoginActivity.this, "Google Login Successful",
                                     Toast.LENGTH_SHORT).show();
-                            sp2 = getSharedPreferences("temp", MODE_PRIVATE);
-                            sp2.edit().putBoolean(FirebaseAuth.getInstance().getCurrentUser().getUid(), true).apply();
                             Intent i = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(i);
                             sp.edit().putBoolean("logged", true).apply();
@@ -449,8 +401,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                             Toast.makeText(LoginActivity.this, "Facebook Login Successful.",
                                     Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            sp2 = getSharedPreferences("temp", MODE_PRIVATE);
-                            sp2.edit().putBoolean(FirebaseAuth.getInstance().getCurrentUser().getUid(), true).apply();
                             finish();
                         }
                     }
@@ -479,6 +429,43 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     }
                 });
     }
+
+
+    private void signIn2(String email, String password) {
+        //Log.d(TAG, "signIn:" + email);
+        if (!validateForm()) {
+            return;
+        }
+        // [START sign_in_with_email]
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            //Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user.isEmailVerified()) {
+                                Toast.makeText(LoginActivity.this, "Login Successful",
+                                        Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(i);
+                                sp.edit().putBoolean("logged", true).apply();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Verify Email Sent.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            // Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Sign in Failed.\nEnter Valid Email and Password",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+        // [END sign_in_with_email]
+    }
+
 
     /**
      * To check the validity of all the views
@@ -565,105 +552,4 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         }
     }
-
-    private void deleteAccessToken() {
-        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-
-                if (currentAccessToken == null) {
-                    LoginManager.getInstance().logOut();
-                }
-            }
-        };
-    }
-
-    public void sign_in(View v) {
-
-        String email = mEmailField.getText().toString();
-        String password = mPasswordField.getText().toString();
-        dialog.setMessage("Signing In...");
-        dialog.show();
-        if (!validateForm()) {
-            return;
-        }
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        if (task.isSuccessful()) {
-                            dialog.dismiss();
-
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            if (user.isEmailVerified()) {
-                                Toast.makeText(LoginActivity.this, "Login Successful",
-                                        Toast.LENGTH_SHORT).show();
-
-                                DatabaseReference rootRef, userRef;
-                                rootRef = FirebaseDatabase.getInstance().getReference();
-                                //mStorage = FirebaseStorage.getInstance().getReference("Profile Pics");
-                                userRef = rootRef.child("User").child(mAuth.getUid());
-
-
-                                userRef.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                        String type = dataSnapshot.child("type").getValue(String.class);
-                                        assert type != null;
-                                        int userType = Integer.parseInt(type);
-
-
-                                        switch (userType) {
-                                            case 1:
-                                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                                sp.edit().putBoolean("logged", true).apply();
-                                                startActivity(intent);
-                                                break;
-                                            case 2:
-                                                Intent intent1 = new Intent(LoginActivity.this, AdminActivity.class);
-                                                sp.edit().putBoolean("logged", true).apply();
-                                                startActivity(intent1);
-                                                break;
-
-                                        }
-                                        sp.edit().putBoolean("logged", true).apply();
-                                        sp2 = getSharedPreferences("temp", MODE_PRIVATE);
-                                        sp2.edit().putBoolean(FirebaseAuth.getInstance().getCurrentUser().getUid(), true).apply();
-
-
-//                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-//                                startActivity(i);
-
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-
-                                });
-                            } else {
-                                Toast.makeText(LoginActivity.this, "Verify Email Sent.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            // Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            dialog.dismiss();
-                            Toast.makeText(LoginActivity.this, "Sign in Failed.\nEnter Valid Email and Password",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-
-                });
-
-
-    }
 }
-
-//Sai Girish(Major), Vasudev B M(Minor), Vikas B N(Notification)

@@ -102,11 +102,11 @@ public class Profile1 extends AppCompatActivity {
                 String bal = dataSnapshot.child("balance").getValue(String.class);
                 // int  ad = (int)dataSnapshot.child("ads").getValue();
 
-
-                String imageurl = dataSnapshot.child("url").getValue().toString();
-                if (imageurl != " ")
-                    Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView1);
-
+                try {
+                    String imageurl = dataSnapshot.child("url").getValue().toString();
+                    if (imageurl != " ")
+                        Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView1);
+                }catch (Exception e){}
 
                 profileName = findViewById(R.id.profile_name);
                 profileEmail = findViewById(R.id.profile_email);

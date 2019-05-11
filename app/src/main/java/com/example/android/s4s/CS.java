@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -62,7 +64,7 @@ public class CS extends Fragment {
 
         adapter = new BookAdapter(getActivity(), books);
 
-        ListView listView = v.findViewById(R.id.list);
+        final ListView listView = v.findViewById(R.id.list);
 
 
         listView.setAdapter(adapter);
@@ -71,7 +73,12 @@ public class CS extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+               // TableRow tableRow = (TableRow) (listView.getItemAtPosition(position));
+                //String bookid = ((TextView) tableRow.findViewById(R.id.book_title)).getText().toString();
+                //String bookid = listView.getItemAtPosition(position).toString();
+                String bookid = ((TextView) view.findViewById(R.id.book_id)).getText().toString();
                 Intent intent = new Intent(getContext(), addtocart.class);
+                intent.putExtra("bookid",bookid);
                 startActivity(intent);
             }
         });

@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Item> {
@@ -41,8 +44,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Item> 
         viewHolder.setBookAuthor(book.getmAuthorname());
         viewHolder.setBookPrice(book.getmPrice());
         //viewHolder.setWishlist(book.getWish());
-        //viewHolder.setBookImage(book.getMgetBookImageId());
+        viewHolder.setBookId(book.getBook_Id());
         //viewHolder.setItemwish(book.getMaddtoCartId());
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images/"+ book.getBook_Id());
+        GlideApp.with(context)
+                .load(storageReference)
+                .into(viewHolder.bookImage);
     }
 
     @Override
@@ -56,6 +64,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Item> 
         TextView bookAuthor;
         TextView bookPrice;
         TextView wishlist;
+        TextView bookId;
         ImageView bookImage;
         ImageView itemwish;
 
@@ -69,6 +78,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Item> 
             wishlist = itemView.findViewById(R.id.text_wishlist);
             bookImage = itemView.findViewById(R.id.item_image);
             itemwish = itemView.findViewById(R.id.add_wishlist);
+            bookId = itemView.findViewById(R.id.book_id);
 
 
         }
@@ -84,6 +94,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Item> 
         public void setBookPrice(String price) {
             bookPrice.setText(price);
         }
+
+        public void setBookId(String bookid) { bookId.setText(bookid);}
 
         public void setWishlist(String wish) {
 
