@@ -45,6 +45,8 @@ public class addtocart extends AppCompatActivity {
     RatingBar rating_bar;
     ImageView img;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -209,7 +211,10 @@ public class addtocart extends AppCompatActivity {
 
     public void openPayment(View view)
     {
+        Bundle bundle = getIntent().getExtras();
+        final String bookid = bundle.getString("bookid");
         Intent i = new Intent(addtocart.this, payment.class);
+        i.putExtra("bookid",bookid);
         startActivity(i);
     }
 

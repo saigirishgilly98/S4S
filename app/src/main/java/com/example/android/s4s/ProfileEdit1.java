@@ -119,7 +119,7 @@ public class ProfileEdit1 extends AppCompatActivity {
         imageView2 = findViewById(R.id.profile_editpic);
 
         rootRef = FirebaseDatabase.getInstance().getReference();
-        userRef = rootRef.child("User").child(FirebaseAuth.getInstance().getUid());
+        userRef = rootRef.child("User").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 
         userRef.addValueEventListener(new ValueEventListener() {
@@ -196,9 +196,9 @@ public class ProfileEdit1 extends AppCompatActivity {
 
                         try {
                             if (!name.equals(""))
-                                userRef.child((mAuth.getUid())).child("name").setValue(name);
+                                userRef.child((mAuth.getCurrentUser().getUid())).child("name").setValue(name);
                             if (!phone.equals(""))
-                                userRef.child((mAuth.getUid())).child("phone").setValue(phone);
+                                userRef.child((mAuth.getCurrentUser().getUid())).child("phone").setValue(phone);
 
                         } catch (Exception e) {
                             e.printStackTrace();

@@ -187,6 +187,9 @@ public class RegistrationActivity extends AppCompatActivity {
                                 database.getReference("User").child(mAuth.getCurrentUser().getUid()).child("email").setValue(email);
                                 database.getReference("User").child(mAuth.getCurrentUser().getUid()).child("phone").setValue(phone.getText().toString());
                                 database.getReference("User").child(mAuth.getCurrentUser().getUid()).child("password").setValue(password);
+                                database.getReference("User").child(mAuth.getCurrentUser().getUid()).child("wallet").setValue("1000");
+                                database.getReference("User").child(mAuth.getCurrentUser().getUid()).child("uid").setValue(mAuth.getCurrentUser().getUid());
+                                database.getReference().child("User").child(mAuth.getCurrentUser().getUid()).child("url").setValue("https://www.flaticon.com/free-icon/man_236831.jpg");
                             }catch (Exception e){}
                             // [START send_email_verification]
                             user.sendEmailVerification()
