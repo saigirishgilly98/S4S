@@ -18,10 +18,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class BookAdapter extends ArrayAdapter<Book> {
 
@@ -81,11 +84,13 @@ public class BookAdapter extends ArrayAdapter<Book> {
         book_id = local_book.getBook_Id();
 
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        storageReference = FirebaseStorage.getInstance().getReference("Front page images");
-        StorageReference mstorage = storageReference.child(currentFirebaseUser.getUid() + book_id + "." + "jpg");
+        storageReference = FirebaseStorage.getInstance().getReference().child("images/"+ book_id);
+        GlideApp.with(getContext())
+                .load(storageReference)
+                .into(bookImage);
 
 
-        try {
+       /* try {
 
             mstorage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
@@ -103,7 +108,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
             });
         } catch (NullPointerException e) {
             // Toast.makeText(BookAdapter.this, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        }*/
 
 
         ///
@@ -117,7 +122,11 @@ public class BookAdapter extends ArrayAdapter<Book> {
         itemwish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getContext(), Wishlist.class);
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                database.getReference("Seller").child(mAuth.getCurrentUser().getUid()).child(book_id).child("Flag").setValue("3");
+                Intent i = new Intent(getApplicationContext(), ShowWishlistDetails.class);
+                i.putExtra("bookid",book_id);
                 getContext().startActivity(i);
             }
         });

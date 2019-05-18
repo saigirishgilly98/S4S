@@ -21,7 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShowStudentDetails extends AppCompatActivity {
+public class ShowWishlistDetails extends AppCompatActivity {
 
 
     DatabaseReference databaseReference;
@@ -43,9 +43,9 @@ public class ShowStudentDetails extends AppCompatActivity {
 
         recyclerView.setHasFixedSize(true);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(ShowStudentDetails.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(ShowWishlistDetails.this));
 
-        progressDialog = new ProgressDialog(ShowStudentDetails.this);
+        progressDialog = new ProgressDialog(ShowWishlistDetails.this);
 
         progressDialog.setMessage("Loading Data from Firebase Database");
 
@@ -59,7 +59,7 @@ public class ShowStudentDetails extends AppCompatActivity {
         final DatabaseReference messageRef = database.getReference("Seller");
         Query queryRef = messageRef.child(currentFirebaseUser.getUid())
                 .orderByChild("Flag")
-                .equalTo("1");
+                .equalTo("3");
         queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -70,7 +70,7 @@ public class ShowStudentDetails extends AppCompatActivity {
 
                 }
 
-                adapter = new RecyclerViewAdapter(ShowStudentDetails.this, list);
+                adapter = new RecyclerViewAdapter(ShowWishlistDetails.this, list);
 
                 recyclerView.setAdapter(adapter);
 
@@ -83,13 +83,12 @@ public class ShowStudentDetails extends AppCompatActivity {
             }
         });
 
-
     }
     @Override
     public void onBackPressed()
     {
         super.onBackPressed();
-        startActivity(new Intent(ShowStudentDetails.this, MainActivity.class));
+        startActivity(new Intent(ShowWishlistDetails.this, MainActivity.class));
         finish();
 
     }

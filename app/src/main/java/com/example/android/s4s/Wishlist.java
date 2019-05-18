@@ -1,39 +1,26 @@
 //Sharmila Biswas
 package com.example.android.s4s;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 public class Wishlist extends AppCompatActivity {
-
     Button buy;
 
 
     AlertDialog.Builder builder;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wishlist1);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        setContentView(R.layout.activity_main);
         buy = findViewById(R.id.buyall);
         builder = new AlertDialog.Builder(this);
-        //this code is for backbutton
-        if(getSupportActionBar()!=null){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
 
         buy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,7 +35,8 @@ public class Wishlist extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 finish();
-                                openPayment(findViewById(R.id.buyall));
+                                Toast.makeText(getApplicationContext(), "Order Placed!!",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -64,22 +52,11 @@ public class Wishlist extends AppCompatActivity {
                 alert.setTitle("Confirm");
                 alert.show();
 
+
             }
 
 
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        if(item.getItemId()==android.R.id.home)
-            finish();
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void openPayment(View view) {
-        Intent i = new Intent(Wishlist.this, payment.class);
-        startActivity(i);
     }
 }
 

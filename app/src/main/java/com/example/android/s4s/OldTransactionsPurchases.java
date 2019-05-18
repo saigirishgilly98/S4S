@@ -2,7 +2,6 @@
 package com.example.android.s4s;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -21,14 +20,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShowStudentDetails extends AppCompatActivity {
+public class OldTransactionsPurchases extends AppCompatActivity {
 
 
     DatabaseReference databaseReference;
 
     ProgressDialog progressDialog;
 
-    List<StudentDetails> list = new ArrayList<>();
+    List<SalesDetails> list = new ArrayList<>();
 
     RecyclerView recyclerView;
 
@@ -37,15 +36,15 @@ public class ShowStudentDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_student_details);
+        setContentView(R.layout.activity_old_transactions_sales);
 
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView2);
 
         recyclerView.setHasFixedSize(true);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(ShowStudentDetails.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(OldTransactionsPurchases.this));
 
-        progressDialog = new ProgressDialog(ShowStudentDetails.this);
+        progressDialog = new ProgressDialog(OldTransactionsPurchases.this);
 
         progressDialog.setMessage("Loading Data from Firebase Database");
 
@@ -59,18 +58,19 @@ public class ShowStudentDetails extends AppCompatActivity {
         final DatabaseReference messageRef = database.getReference("Seller");
         Query queryRef = messageRef.child(currentFirebaseUser.getUid())
                 .orderByChild("Flag")
-                .equalTo("1");
+                .equalTo("2");
         queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
-                    StudentDetails studentDetails = dataSnapshot.getValue(StudentDetails.class);
-                    list.add(studentDetails);
+                    SalesDetails salesDetails = dataSnapshot.getValue(SalesDetails.class);
+                    list.add(salesDetails);
 
                 }
 
-                adapter = new RecyclerViewAdapter(ShowStudentDetails.this, list);
+                adapter = new RecyclerViewAdapterSales(OldTransactionsPurchases.this, list);
+
 
                 recyclerView.setAdapter(adapter);
 
@@ -84,13 +84,32 @@ public class ShowStudentDetails extends AppCompatActivity {
         });
 
 
-    }
-    @Override
-    public void onBackPressed()
-    {
-        super.onBackPressed();
-        startActivity(new Intent(ShowStudentDetails.this, MainActivity.class));
-        finish();
+        /** databaseReference.addValueEventListener(new ValueEventListener() {
+        @Override public void onDataChange(DataSnapshot snapshot) {
+
+        //DataSnapshot childSnapshot = snapshot.child(currentFirebaseUser.getUid());
+        //Iterable<DataSnapshot> childChildren = childSnapshot.getChildren();
+
+        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+
+        StudentDetails studentDetails = dataSnapshot.getValue(StudentDetails.class);
+        list.add(studentDetails);
+
+        }
+
+        adapter = new RecyclerViewAdapter(ShowStudentDetails.this, list);
+
+        recyclerView.setAdapter(adapter);
+
+        progressDialog.dismiss();
+        }
+
+        @Override public void onCancelled(DatabaseError databaseError) {
+
+        progressDialog.dismiss();
+
+        }
+        });**/
 
     }
 }

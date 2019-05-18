@@ -7,6 +7,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,6 +48,10 @@ public class addtocart extends AppCompatActivity {
     ImageView img;
 
 
+    private FirebaseDatabase database;
+    private FirebaseAuth mAuth;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +73,13 @@ public class addtocart extends AppCompatActivity {
         rating_bar = findViewById(R.id.ratingBar);
         img = findViewById(R.id.imageView1);
 
+        database = FirebaseDatabase.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
         Bundle bundle = getIntent().getExtras();
         final String bookid = bundle.getString("bookid");
 
+        int index = 0;
 
         DatabaseReference rootref, userref;
         rootref = FirebaseDatabase.getInstance().getReference();
@@ -164,7 +174,7 @@ public class addtocart extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int id) {
 
 
-                                openPayment(findViewById(R.id.button2));
+                                openMyOrders(findViewById(R.id.button2));
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -209,18 +219,23 @@ public class addtocart extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void openPayment(View view)
+    public void openMyOrders(View view)
     {
         Bundle bundle = getIntent().getExtras();
         final String bookid = bundle.getString("bookid");
-        Intent i = new Intent(addtocart.this, payment.class);
+        database.getReference("Seller").child(mAuth.getCurrentUser().getUid()).child(bookid).child("Flag").setValue("1");
+        Intent i = new Intent(addtocart.this, ShowStudentDetails.class);
         i.putExtra("bookid",bookid);
         startActivity(i);
     }
 
     public void openWishlist(View view)
     {
-        Intent i = new Intent(addtocart.this, Wishlist.class);
+        Bundle bundle = getIntent().getExtras();
+        final String bookid = bundle.getString("bookid");
+        database.getReference("Seller").child(mAuth.getCurrentUser().getUid()).child(bookid).child("Flag").setValue("3");
+        Intent i = new Intent(addtocart.this, ShowWishlistDetails.class);
+        i.putExtra("bookid",bookid);
         startActivity(i);
     }
     public void openMaps(View view)

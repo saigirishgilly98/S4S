@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity
         if (currentUser == null)
             Toast.makeText(this, "Null User Facebook", Toast.LENGTH_SHORT).show();
         else {
-            FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getUid()).child("url").addChildEventListener(new ChildEventListener() {
+            FirebaseDatabase.getInstance().getReference().child("User").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("url").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     //noinspection ConstantConditions
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity
 
             rootRef = FirebaseDatabase.getInstance().getReference();
             //mStorage = FirebaseStorage.getInstance().getReference("Profile Pics");
-            userRef = rootRef.child("User").child(mAuth.getUid());
+            userRef = rootRef.child("User").child(mAuth.getCurrentUser().getUid());
 
 
             userRef.addValueEventListener(new ValueEventListener() {
@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.wishlist:
-                Intent intent6 = new Intent(this, Wishlist.class);
+                Intent intent6 = new Intent(this, ShowWishlistDetails.class);
                 startActivity(intent6);
                 break;
             case R.id.logout:

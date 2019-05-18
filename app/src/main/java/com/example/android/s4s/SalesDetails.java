@@ -1,7 +1,7 @@
 //Sai Girish
 package com.example.android.s4s;
 
-public class StudentDetails {
+public class SalesDetails {
 
 
     private String BookName;
@@ -42,7 +42,7 @@ public class StudentDetails {
         Flag = flag;
     }
 
-    public StudentDetails() {
+    public SalesDetails() {
         // This is default constructor.
     }
 

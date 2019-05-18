@@ -92,11 +92,14 @@ public class EE extends Fragment {
                                 String author = ds1.child("AuthorsName").getValue().toString();
                                 String title = ds1.child("BookName").getValue().toString();
                                 String price = ds1.child("Price").getValue().toString();
+                                String flag = ds1.child("Flag").getValue().toString();
                                 String book_id = ds1.getKey();
                                 String seller_id = ds.getKey();
 
-                                books2.add(new Book(branch, title, author, price, book_id, seller_id));
-                                adapter.notifyDataSetChanged();
+                                if(Integer.parseInt(flag) == 0 || Integer.parseInt(flag) == 3) {
+                                    books2.add(new Book(branch, title, author, price, book_id, seller_id));
+                                    adapter.notifyDataSetChanged();
+                                }
                             }
 
                         } catch (NullPointerException abcd) {

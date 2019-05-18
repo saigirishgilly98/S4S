@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +36,7 @@ import com.google.firebase.storage.StorageReference;
 import java.text.DecimalFormat;
 
 import static com.example.android.s4s.notificationfinal.CHANNELid1;
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static java.lang.Float.parseFloat;
 
 
@@ -145,6 +147,7 @@ public class payment extends AppCompatActivity {
         });
 
 
+
         builder = new AlertDialog.Builder(this);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,8 +161,47 @@ public class payment extends AppCompatActivity {
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                finish();
-                                paymentnote();
+                                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                                final DatabaseReference messageRef2 = database.getReference("User");
+                                String str = remainingBalance.getText().toString();
+                                double balance =Double.parseDouble(str.replaceAll("[^\\.0123456789]",""));
+                                String str2 = totalPrice.getText().toString();
+                                double currentbalance = Double.parseDouble(str2.replaceAll("[^\\.0123456789]",""));
+                                if(balance > currentbalance) {
+                                    messageRef2.child(currentFirebaseUser.getUid()).child("wallet").setValue(balance);
+                                    final DatabaseReference messageRef = database.getReference("Seller");
+                                    Query queryRef = messageRef.child(currentFirebaseUser.getUid())
+                                            .orderByChild("Book_Id")
+                                            .equalTo(bookid);
+                                    queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                                FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                                                messageRef.child(currentFirebaseUser.getUid()).child(bookid).child("Flag").setValue("2");
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    payment.this.startActivity(intent);
+                                    Toast.makeText(getApplicationContext(), "Payment Successful",
+                                            Toast.LENGTH_SHORT).show();
+                                    paymentnote();
+                                }
+                                else
+                                {
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    payment.this.startActivity(intent);
+                                    Toast.makeText(getApplicationContext(), "No sufficient balance in wallet",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {

@@ -99,7 +99,7 @@ public class Profile1 extends AppCompatActivity {
                 String name = dataSnapshot.child("name").getValue(String.class);
                 String email = dataSnapshot.child("email").getValue(String.class);
                 String phone = dataSnapshot.child("phone").getValue(String.class);
-                String bal = dataSnapshot.child("balance").getValue(String.class);
+                String bal = dataSnapshot.child("wallet").getValue(String.class);
                 // int  ad = (int)dataSnapshot.child("ads").getValue();
 
                 try {

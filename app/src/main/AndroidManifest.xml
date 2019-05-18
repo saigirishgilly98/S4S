@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -35,10 +34,11 @@
         android:supportsRtl="true"
         android:theme="@style/HiddenTitleTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity android:name=".OldTransactionsSales"></activity>
         <activity
             android:name=".ProfileEditAdmin"
             android:label="@string/title_activity_profile_edit_admin"
-            android:theme="@style/HiddenTitleTheme.NoActionBar"></activity>
+            android:theme="@style/HiddenTitleTheme.NoActionBar" />
         <activity
             android:name=".ProfileAdmin"
             android:label="@string/title_activity_profile_admin"
@@ -80,9 +80,9 @@
             android:name=".Seller"
             android:label="@string/title_activity_seller1"
             android:theme="@style/AppTheme" /> <!-- <activity -->
-        <!--android:name=".Old" -->
-        <!--android:label="@string/title_activity_old" -->
-        <!--android:theme="@style/AppTheme" /> -->
+        <!-- android:name=".Old" -->
+        <!-- android:label="@string/title_activity_old" -->
+        <!-- android:theme="@style/AppTheme" /> -->
         <activity
             android:name=".Feedback"
             android:label="@string/title_activity_feedback"
@@ -101,7 +101,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".TermsActivity" />
         <activity android:name=".LoginActivity" />
-
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -124,8 +123,6 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
-
         <activity android:name=".RegistrationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -141,8 +138,9 @@
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />
 
-
         <activity android:name=".SearchResults" />
+        <activity android:name=".OldTransactionsPurchases"/>
+        <activity android:name=".ShowWishlistDetails"/>
         <activity android:name=".Pop" />
         <activity android:name=".MainActivitywish" />
         <activity android:name=".my_orders" />
@@ -150,17 +148,14 @@
             android:name=".ShowStudentDetails"
             android:label="Show Student"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".SalesList"
             android:label="Sales"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".PurchasesList"
             android:label="Purchase"
             android:theme="@style/AppTheme" />
-
 
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>

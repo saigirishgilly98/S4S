@@ -5,6 +5,7 @@ package com.example.android.s4s;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
@@ -54,11 +57,50 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        StudentDetails studentDetails = MainImageUploadInfoList.get(position);
+        final StudentDetails studentDetails = MainImageUploadInfoList.get(position);
 
         holder.StudentNameTextView.setText(studentDetails.getBookName() + "\n");
 
         holder.StudentNumberTextView.setText("Book Name: " + studentDetails.getBookName() + "\nAuthor Name: " + studentDetails.getAuthorsName() + "\nEdition: " + studentDetails.getBookEdition() + "\nPublisher: " + studentDetails.getPublisher() + "\nPrice: " + studentDetails.getPrice());
+
+        holder.remove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                final DatabaseReference messageRef = database.getReference("Seller");
+                FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                Query queryRef = messageRef.child(currentFirebaseUser.getUid())
+                        .orderByChild("Book_Id")
+                        .equalTo(studentDetails.getBook_Id());
+                queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                            messageRef.child(currentFirebaseUser.getUid()).child(studentDetails.getBook_Id()).child("Flag").setValue("0");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                Intent intent = new Intent(context, MainActivity.class);
+                context.startActivity(intent);
+                Toast.makeText(getApplicationContext(), "Book is removed from MyOrders" ,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        holder.pay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, payment.class);
+                intent.putExtra("bookid",studentDetails.getBook_Id());
+                context.startActivity(intent);
+            }
+        });
 
         Location locationA = new Location("point A");
 
@@ -76,6 +118,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         float distance = locationA.distanceTo(locationB);
         holder.BookDistanceTextView.setText("Distance: " + distance + "m");
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images/"+ studentDetails.getBook_Id());
+        GlideApp.with(context)
+                .load(storageReference)
+                .into(holder.img);
     }
 
     @Override
@@ -91,6 +138,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public TextView BookDistanceTextView;
         private Button pay, remove;
         private ImageView map;
+        public ImageView img;
 
 
         public ViewHolder(View itemView) {
@@ -103,48 +151,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             BookDistanceTextView = itemView.findViewById(R.id.book_distance);
 
+            img = itemView.findViewById(R.id.imageView1);
+
             pay = itemView.findViewById(R.id.button_pay);
             remove = itemView.findViewById(R.id.button_remove);
             map = itemView.findViewById(R.id.google_maps);
-            pay.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, payment.class);
-                    context.startActivity(intent);
-                }
-            });
-
-
-            remove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    final DatabaseReference messageRef = database.getReference("Seller");
-                    FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                    Query queryRef = messageRef.child(currentFirebaseUser.getUid())
-                            .orderByChild("Position")
-                            .equalTo("" + getAdapterPosition());
-                    queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                String key = child.getKey();
-                                FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                                messageRef.child(currentFirebaseUser.getUid()).child("" + getAdapterPosition()).child("Flag").setValue("1");
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                    Intent intent = new Intent(context, MainActivity.class);
-                    context.startActivity(intent);
-                    Toast.makeText(getApplicationContext(), "Book is removed from Wishlist" + getAdapterPosition(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
 
             map.setOnClickListener(new View.OnClickListener() {
                 @Override

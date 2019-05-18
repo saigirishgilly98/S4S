@@ -33,12 +33,12 @@ public class OldTransactions extends AppCompatActivity {
     }
 
     public void openSalesList(View view) {
-        Intent i = new Intent(OldTransactions.this, SalesList.class);
+        Intent i = new Intent(OldTransactions.this, OldTransactionsSales.class);
         startActivity(i);
     }
 
     public void openPurchasesList(View view) {
-        Intent i = new Intent(OldTransactions.this, PurchasesList.class);
+        Intent i = new Intent(OldTransactions.this, OldTransactionsPurchases.class);
         startActivity(i);
     }
 }
