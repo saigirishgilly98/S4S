@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
@@ -50,7 +51,7 @@ public class Profile1 extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         DatabaseReference rootRef, userRef;
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         imageView1 = findViewById(R.id.profile_pic);
 
         //imageView1.setVisibility(View.VISIBLE);
@@ -62,8 +63,12 @@ public class Profile1 extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 //noinspection ConstantConditions
-                url = dataSnapshot.getValue().toString();
-                Picasso.with(getApplicationContext()).load(url).fit().centerCrop().into(imageView1);
+                /**url = dataSnapshot.getValue().toString();
+                Picasso.with(getApplicationContext()).load(url).fit().centerCrop().into(imageView1);**/
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("profilepic/"+ mAuth.getCurrentUser().getUid());
+                GlideApp.with(getApplicationContext())
+                        .load(storageReference)
+                        .into(imageView1);
             }
 
             @Override
@@ -89,7 +94,7 @@ public class Profile1 extends AppCompatActivity {
 
         rootRef = FirebaseDatabase.getInstance().getReference();
         //mStorage = FirebaseStorage.getInstance().getReference("Profile Pics");
-        userRef = rootRef.child("User").child(mAuth.getUid());
+        userRef = rootRef.child("User").child(mAuth.getCurrentUser().getUid());
 
 
         userRef.addValueEventListener(new ValueEventListener() {
@@ -103,9 +108,14 @@ public class Profile1 extends AppCompatActivity {
                 // int  ad = (int)dataSnapshot.child("ads").getValue();
 
                 try {
-                    String imageurl = dataSnapshot.child("url").getValue().toString();
+                    /**String imageurl = dataSnapshot.child("url").getValue().toString();
                     if (imageurl != " ")
-                        Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView1);
+                        Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView1);**/
+                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("profilepic/"+ mAuth.getCurrentUser().getUid());
+                    GlideApp.with(getApplicationContext())
+                            .load(storageReference)
+                            .into(imageView1);
+                        
                 }catch (Exception e){}
 
                 profileName = findViewById(R.id.profile_name);

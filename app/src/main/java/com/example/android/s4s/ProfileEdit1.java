@@ -33,6 +33,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,6 +45,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
@@ -77,6 +79,8 @@ public class ProfileEdit1 extends AppCompatActivity {
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     Uri picUri;
+    private Uri filePath;
+    private final int PICK_IMAGE_REQUEST = 71;
 
 
     private FirebaseDatabase database;
@@ -131,9 +135,14 @@ public class ProfileEdit1 extends AppCompatActivity {
                 //String phone = dataSnapshot.child("phone").getValue(String.class);
 
 
-                String imageurl = dataSnapshot.child("url").getValue().toString();
+               /** String imageurl = dataSnapshot.child("url").getValue().toString();
                 if (imageurl != " ")
-                    Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView2);
+                    Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView2);**/
+
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("profile/"+ mAuth.getCurrentUser().getUid());
+                GlideApp.with(getApplicationContext())
+                        .load(storageReference)
+                        .into(imageView2);
 
             }
 
@@ -142,9 +151,9 @@ public class ProfileEdit1 extends AppCompatActivity {
 
             }
         });
-        key = mAuth.getUid();
+        key = mAuth.getCurrentUser().getUid();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("User").child(mAuth.getUid());
+        databaseReference = FirebaseDatabase.getInstance().getReference("User").child(mAuth.getCurrentUser().getUid());
         storageReference = FirebaseStorage.getInstance().getReference();
 
 
@@ -157,7 +166,7 @@ public class ProfileEdit1 extends AppCompatActivity {
         pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(getPickImageChooserIntent(), 200);
+                chooseImage();
             }
         });
 
@@ -187,6 +196,38 @@ public class ProfileEdit1 extends AppCompatActivity {
                 rootRef = FirebaseDatabase.getInstance().getReference();
                 userRef = rootRef.child("User");
 
+                //Upload Image
+                if(filePath != null)
+                {
+          /*  final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();*/
+
+                    StorageReference ref = storageReference.child("profilepic/"+String.valueOf(mAuth.getCurrentUser().getUid()));
+                    ref.putFile(filePath)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    //progressDialog.dismiss();
+                                    Toast.makeText(ProfileEdit1.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    //progressDialog.dismiss();
+                                    Toast.makeText(ProfileEdit1.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                    double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                            .getTotalByteCount());
+                                    // progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                                }
+                            });
+                }
 
                 userRef.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -220,6 +261,32 @@ public class ProfileEdit1 extends AppCompatActivity {
         });
 
 
+    }
+
+    private void chooseImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        y = 1;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            filePath = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                imageView2.setImageBitmap(bitmap);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void Editprofilenote() {
@@ -264,7 +331,7 @@ public class ProfileEdit1 extends AppCompatActivity {
     }
 
 
-    public Intent getPickImageChooserIntent() {
+    /**public Intent getPickImageChooserIntent() {
 
         Uri outputFileUri = getCaptureImageOutputUri();
 
@@ -389,7 +456,7 @@ public class ProfileEdit1 extends AppCompatActivity {
 
         }
 
-    }
+    }**/
 
     private static Bitmap rotateImageIfRequired(Bitmap img, Uri selectedImage) throws IOException {
 
@@ -431,7 +498,7 @@ public class ProfileEdit1 extends AppCompatActivity {
         return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
-    public Uri getPickImageResultUri(Intent data) {
+   /** public Uri getPickImageResultUri(Intent data) {
         boolean isCamera = true;
         if (data != null) {
             String action = data.getAction();
@@ -440,7 +507,7 @@ public class ProfileEdit1 extends AppCompatActivity {
 
 
         return isCamera ? getCaptureImageOutputUri() : data.getData();
-    }
+    }**/
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

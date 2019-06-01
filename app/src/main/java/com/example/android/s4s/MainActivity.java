@@ -36,6 +36,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -114,8 +116,12 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     //noinspection ConstantConditions
-                    String url = dataSnapshot.getValue().toString();
-                    Picasso.with(getApplicationContext()).load(url).fit().centerCrop().into(imageView);
+                    /**String url = dataSnapshot.getValue().toString();
+                    Picasso.with(getApplicationContext()).load(url).fit().centerCrop().into(imageView);**/
+                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("profile/"+ mAuth.getCurrentUser().getUid());
+                    GlideApp.with(getApplicationContext())
+                            .load(storageReference)
+                            .into(imageView);
                 }
 
                 @Override
@@ -157,6 +163,11 @@ public class MainActivity extends AppCompatActivity
                         String imageurl = dataSnapshot.child("url").getValue().toString();
                         if (imageurl != " ")
                             Picasso.with(getApplicationContext()).load(imageurl).fit().centerCrop().into(imageView);
+
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("profilepic/"+ mAuth.getCurrentUser().getUid());
+                        GlideApp.with(getApplicationContext())
+                                .load(storageReference)
+                                .into(imageView);
 
                         t1 = findViewById(R.id.nav_head_name);
                         t2 = findViewById(R.id.textView);
