@@ -35,6 +35,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     Context context;
     List<StudentDetails> MainImageUploadInfoList;
+    String latitudeA,longitudeA,latitudeB,longitudeB;
 
 
     public RecyclerViewAdapter(Context context, List<StudentDetails> TempList) {
@@ -102,22 +103,72 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
         });
 
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("User").child(mAuth.getCurrentUser().getUid());
+
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                latitudeA = dataSnapshot.child("latitude").getValue().toString();
+                longitudeA = dataSnapshot.child("longitude").getValue().toString();
+                System.out.println("Latitude A = "+latitudeA);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
         Location locationA = new Location("point A");
 
-        double latA = 13.0108;
-        double lngA = 74.7943;
-        locationA.setLatitude(latA);
-        locationA.setLongitude(lngA);
+        try {
+            double latA = Double.parseDouble(latitudeA);
+            double lngA = Double.parseDouble(longitudeA);
+            System.out.println("LatA = "+latA);
+            locationA.setLatitude(latA);
+            locationA.setLongitude(lngA);
+        }catch (Exception e){}
+
+
+        DatabaseReference sellerRef = FirebaseDatabase.getInstance().getReference("Seller");
+
+
+        sellerRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    latitudeB = ds.child(studentDetails.getBook_Id()).child("Latitude").getValue().toString();
+                    longitudeB = ds.child(studentDetails.getBook_Id()).child("Longitude").getValue().toString();
+                    System.out.println("Latitude B = "+latitudeB);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         Location locationB = new Location("point B");
+        try {
+            double latB = Double.parseDouble(latitudeB);
+            double lngB = Double.parseDouble(longitudeB);
+            System.out.println("LatB = " + latB);
+            locationB.setLatitude(latB);
+            locationB.setLongitude(lngB);
+        }catch (Exception e){}
 
-        double latB = 15.1622;
-        double lngB = 76.9440;
-        locationB.setLatitude(latB);
-        locationB.setLongitude(lngB);
-
-        float distance = locationA.distanceTo(locationB);
-        holder.BookDistanceTextView.setText("Distance: " + distance + "m");
+        try {
+            float distance = locationA.distanceTo(locationB);
+            holder.BookDistanceTextView.setText("Distance: " + distance + "m");
+            System.out.println("Distance = " + distance);
+        }catch (Exception e){}
 
         StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images/"+ studentDetails.getBook_Id());
         GlideApp.with(context)

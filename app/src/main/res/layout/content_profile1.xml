@@ -160,14 +160,14 @@
                         android:layout_height="36dp"
                         app:srcCompat="@drawable/ic_email_black_24dp"/>
                     <TextView
-                        android:id="@+id/profile_email"
+                        android:id="@+id/profile_locality"
 
                         android:textStyle="bold"
                         android:layout_gravity="center_vertical"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="20dp"
-                        tools:text="UserName@e-mail.com"/>
+                        tools:text="Locality"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_marginTop="25dp"
@@ -178,9 +178,9 @@
                     <ImageView
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        app:srcCompat="@drawable/ic_phone_android_black_24dp"/>
+                        app:srcCompat="@drawable/ic_email_black_24dp"/>
                     <TextView
-                        android:id="@+id/profile_phone"
+                        android:id="@+id/profile_city"
 
                         android:textStyle="bold"
 
@@ -188,7 +188,49 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="20dp"
-                        tools:text="+9876543210"/>
+                        tools:text="City"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginTop="25dp"
+                    android:orientation="horizontal"
+                    android:paddingLeft="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        app:srcCompat="@drawable/ic_email_black_24dp"/>
+                    <TextView
+                        android:id="@+id/profile_district"
+
+                        android:textStyle="bold"
+
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="20dp"
+                        tools:text="District"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginTop="25dp"
+                    android:orientation="horizontal"
+                    android:paddingLeft="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        app:srcCompat="@drawable/ic_email_black_24dp"/>
+                    <TextView
+                        android:id="@+id/profile_state"
+
+                        android:textStyle="bold"
+
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="20dp"
+                        tools:text="State"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_marginTop="25dp"

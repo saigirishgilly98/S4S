@@ -41,7 +41,7 @@ public class Profile1 extends AppCompatActivity {
 
     CircleImageView imageView1;
 
-    TextView profileName, profileEmail, profilePhone;
+    TextView profileName, profileLocality, profileCity, profileDistrict, profileState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +102,10 @@ public class Profile1 extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 String name = dataSnapshot.child("name").getValue(String.class);
-                String email = dataSnapshot.child("email").getValue(String.class);
-                String phone = dataSnapshot.child("phone").getValue(String.class);
+                String locality = dataSnapshot.child("locality").getValue(String.class);
+                String city = dataSnapshot.child("city").getValue(String.class);
+                String district = dataSnapshot.child("district").getValue(String.class);
+                String state = dataSnapshot.child("state").getValue(String.class);
                 String bal = dataSnapshot.child("wallet").getValue(String.class);
                 // int  ad = (int)dataSnapshot.child("ads").getValue();
 
@@ -119,15 +121,19 @@ public class Profile1 extends AppCompatActivity {
                 }catch (Exception e){}
 
                 profileName = findViewById(R.id.profile_name);
-                profileEmail = findViewById(R.id.profile_email);
-                profilePhone = findViewById(R.id.profile_phone);
+                profileLocality = findViewById(R.id.profile_locality);
+                profileCity = findViewById(R.id.profile_city);
+                profileDistrict = findViewById(R.id.profile_district);
+                profileState = findViewById(R.id.profile_state);
                 balance = findViewById(R.id.profile_balance);
                 // ads = findViewById(R.id.profile_no_of_ads);
 
 
                 profileName.setText(name);
-                profileEmail.setText(email);
-                profilePhone.setText(phone);
+                profileLocality.setText(locality);
+                profileCity.setText(city);
+                profileDistrict.setText(district);
+                profileState.setText(state);
                 balance.setText(bal);
                 // ads.setText(ad);
 

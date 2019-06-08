@@ -102,11 +102,11 @@
                         app:srcCompat="@drawable/ic_email_black_24dp" />
 
                     <EditText
-                        android:id="@+id/editmail"
+                        android:id="@+id/editlocality"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:hint="Enter new e-mail"
+                        android:hint="Enter new locality"
                         android:inputType="textEmailAddress"
                         android:paddingLeft="20dp"
                         android:textStyle="bold"
@@ -117,23 +117,69 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="25dp"
                     android:orientation="horizontal"
                     android:paddingLeft="25dp">
 
                     <ImageView
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        app:srcCompat="@drawable/ic_phone_android_black_24dp" />
+                        app:srcCompat="@drawable/ic_email_black_24dp" />
 
                     <EditText
-                        android:id="@+id/editphone"
+                        android:id="@+id/editcity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:hint="New Phone Number"
-                        android:inputType="phone"
-                        android:maxLength="10"
+                        android:hint="Enter new city"
+                        android:inputType="textEmailAddress"
+                        android:paddingLeft="20dp"
+                        android:textStyle="bold"
+
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="25dp">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        app:srcCompat="@drawable/ic_email_black_24dp" />
+
+                    <EditText
+                        android:id="@+id/editdistrict"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:hint="Enter new district"
+                        android:inputType="textEmailAddress"
+                        android:paddingLeft="20dp"
+                        android:textStyle="bold"
+
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="25dp">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        app:srcCompat="@drawable/ic_email_black_24dp" />
+
+                    <EditText
+                        android:id="@+id/editstate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:hint="Enter new state"
+                        android:inputType="textEmailAddress"
                         android:paddingLeft="20dp"
                         android:textStyle="bold"
 

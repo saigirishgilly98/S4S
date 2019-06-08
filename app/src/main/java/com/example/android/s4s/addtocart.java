@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -224,9 +225,30 @@ public class addtocart extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         final String bookid = bundle.getString("bookid");
         database.getReference("Seller").child(mAuth.getCurrentUser().getUid()).child(bookid).child("Flag").setValue("1");
-        Intent i = new Intent(addtocart.this, ShowStudentDetails.class);
-        i.putExtra("bookid",bookid);
-        startActivity(i);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("User").child(mAuth.getCurrentUser().getUid());
+
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String latitudeA,longitudeA;
+                latitudeA = dataSnapshot.child("latitude").getValue().toString();
+                longitudeA = dataSnapshot.child("longitude").getValue().toString();
+                System.out.println("Latitude A = "+latitudeA);
+                Intent i = new Intent(addtocart.this, ShowStudentDetails.class);
+                i.putExtra("bookid",bookid);
+                i.putExtra("latitude",latitudeA);
+                i.putExtra("longitude",longitudeA);
+                startActivity(i);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void openWishlist(View view)

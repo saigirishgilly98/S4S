@@ -7,6 +7,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,6 +15,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -47,6 +50,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -95,7 +99,7 @@ public class Seller extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference book_name, book_author, book_edition, book_publisher, book_price,
             book_rating, sel_society, sel_district, sel_pincode, sel_phn, sel_state, flag,
-            book_branch, book_key, user_key;
+            book_branch, book_key, user_key,latitude,longitude;
 
     private FirebaseDatabase databasebook;
     private FirebaseAuth mAuth;
@@ -247,7 +251,8 @@ public class Seller extends AppCompatActivity {
         book_rating = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Rating");
         book_key = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Book_Id");
         user_key = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("User_Id");
-
+        latitude = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Latitude");
+        longitude = databasebook.getReference("Seller").child(currentFirebaseUser.getUid()).child(String.valueOf(key)).child("Longitude");
 
 
         //below content is for placing backbutton in the toolbar
@@ -558,6 +563,9 @@ public class Seller extends AppCompatActivity {
         flag.setValue(value);
         book_key.setValue(key);
         user_key.setValue(currentFirebaseUser.getUid());
+        LatLng locationFromAddress = getLocationFromAddress(getApplicationContext(), editText7.getText().toString() + "," + editText8.getText().toString() + "," + editText10.getText().toString());
+        latitude.setValue(locationFromAddress.latitude);
+        longitude.setValue(locationFromAddress.longitude);
 
         //Upload Image
         if(filePath != null)
@@ -595,6 +603,29 @@ public class Seller extends AppCompatActivity {
     }
 
 
+    public LatLng getLocationFromAddress(Context context, String strAddress) {
+
+        Geocoder coder = new Geocoder(context);
+        List<Address> address;
+        LatLng p1 = null;
+
+        try {
+            // May throw an IOException
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address == null) {
+                return null;
+            }
+
+            Address location = address.get(0);
+            p1 = new LatLng(location.getLatitude(), location.getLongitude() );
+
+        } catch (IOException ex) {
+
+            ex.printStackTrace();
+        }
+
+        return p1;
+    }
 
 }
 

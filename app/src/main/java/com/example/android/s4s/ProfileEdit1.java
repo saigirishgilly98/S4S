@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,6 +16,9 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -35,6 +39,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -65,9 +72,10 @@ import static com.example.android.s4s.notificationfinal.CHANNELid1;
 public class ProfileEdit1 extends AppCompatActivity {
 
     private static final int ALL_PERMISSIONS_RESULT = 107;
-    DatabaseReference databaseReference;
-    EditText email_edit, phone_edit, name_edit;
-    String phone, email, name;
+    private FusedLocationProviderClient fusedLocationClient;
+    DatabaseReference databaseReference, latitude, longitude;
+    EditText name_edit, locality_edit, city_edit, district_edit, state_edit;
+    String locality, city, district, state, name;
     ProgressDialog dialog;
     AlertDialog.Builder builder;
     CircleImageView imageView1, imageView2;
@@ -110,10 +118,13 @@ public class ProfileEdit1 extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         name_edit = findViewById(R.id.editname);
-        phone_edit = findViewById(R.id.editphone);
-        email_edit = findViewById(R.id.editmail);
+        locality_edit = findViewById(R.id.editlocality);
+        city_edit = findViewById(R.id.editcity);
+        district_edit = findViewById(R.id.editdistrict);
+        state_edit = findViewById(R.id.editstate);
 
         manager = NotificationManagerCompat.from(this);
+
 
 
         dialog = new ProgressDialog(this);
@@ -121,6 +132,9 @@ public class ProfileEdit1 extends AppCompatActivity {
         mStorage = FirebaseStorage.getInstance().getReference();
         imageView1 = findViewById(R.id.profile_pic);
         imageView2 = findViewById(R.id.profile_editpic);
+
+        latitude = FirebaseDatabase.getInstance().getReference("User").child(currentFirebaseUser.getUid()).child("latitude");
+        longitude = FirebaseDatabase.getInstance().getReference("User").child(currentFirebaseUser.getUid()).child("longitude");
 
         rootRef = FirebaseDatabase.getInstance().getReference();
         userRef = rootRef.child("User").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -188,10 +202,15 @@ public class ProfileEdit1 extends AppCompatActivity {
             @Override
             @NonNull
             public void onClick(View v) {
-                email = email_edit.getText().toString();
-                phone = phone_edit.getText().toString();
+                locality = locality_edit.getText().toString();
+                city = city_edit.getText().toString();
                 name = name_edit.getText().toString();
+                district = district_edit.getText().toString();
+                state = state_edit.getText().toString();
 
+                LatLng locationFromAddress = getLocationFromAddress(getApplicationContext(), locality + "," + city + "," + district + "," + state);
+                latitude.setValue(locationFromAddress.latitude);
+                longitude.setValue(locationFromAddress.longitude);
 
                 rootRef = FirebaseDatabase.getInstance().getReference();
                 userRef = rootRef.child("User");
@@ -238,8 +257,14 @@ public class ProfileEdit1 extends AppCompatActivity {
                         try {
                             if (!name.equals(""))
                                 userRef.child((mAuth.getCurrentUser().getUid())).child("name").setValue(name);
-                            if (!phone.equals(""))
-                                userRef.child((mAuth.getCurrentUser().getUid())).child("phone").setValue(phone);
+                            if (!locality.equals(""))
+                                userRef.child((mAuth.getCurrentUser().getUid())).child("locality").setValue(locality);
+                            if (!city.equals(""))
+                                userRef.child((mAuth.getCurrentUser().getUid())).child("city").setValue(city);
+                            if (!district.equals(""))
+                                userRef.child((mAuth.getCurrentUser().getUid())).child("district").setValue(district);
+                            if (!state.equals(""))
+                                userRef.child((mAuth.getCurrentUser().getUid())).child("state").setValue(state);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -261,6 +286,30 @@ public class ProfileEdit1 extends AppCompatActivity {
         });
 
 
+    }
+
+    public LatLng getLocationFromAddress(Context context, String strAddress) {
+
+        Geocoder coder = new Geocoder(context);
+        List<Address> address;
+        LatLng p1 = null;
+
+        try {
+            // May throw an IOException
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address == null) {
+                return null;
+            }
+
+            Address location = address.get(0);
+            p1 = new LatLng(location.getLatitude(), location.getLongitude());
+
+        } catch (IOException ex) {
+
+            ex.printStackTrace();
+        }
+
+        return p1;
     }
 
     private void chooseImage() {
